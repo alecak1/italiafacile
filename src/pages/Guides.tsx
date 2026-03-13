@@ -7,6 +7,8 @@ import { mockGuides } from '@/data/mockData';
 import { GUIDE_CATEGORIES, GuideCategory } from '@/types';
 
 const Guides = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState<GuideCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
