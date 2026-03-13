@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { Search, BookOpen } from 'lucide-react';
 import GuideCard from '@/components/GuideCard';
 import { mockGuides } from '@/data/mockData';
 import { GUIDE_CATEGORIES, GuideCategory } from '@/types';
@@ -17,14 +17,19 @@ const Guides = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="px-5 pt-12 pb-2">
-        <h1 className="text-2xl font-bold text-foreground">Guide</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Tutto quello che devi sapere, spiegato semplice.</p>
-      </div>
+      <div className="bg-card px-5 pt-12 pb-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/10">
+            <BookOpen className="h-5 w-5 text-secondary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-extrabold text-foreground">Guide</h1>
+            <p className="text-sm text-muted-foreground">Tutto spiegato semplice.</p>
+          </div>
+        </div>
 
-      {/* Search */}
-      <div className="px-5 py-3">
-        <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5">
+        {/* Search */}
+        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-background px-4 py-3">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
             type="text"
@@ -37,13 +42,13 @@ const Guides = () => {
       </div>
 
       {/* Category filters */}
-      <div className="flex gap-2 overflow-x-auto px-5 pb-4 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto px-5 py-4 scrollbar-none">
         <button
           onClick={() => setActiveCategory('all')}
-          className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium transition-all ${
+          className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-semibold transition-all ${
             activeCategory === 'all'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-card text-muted-foreground shadow-card'
+              ? 'gradient-hero text-primary-foreground shadow-cta'
+              : 'bg-card text-muted-foreground shadow-card hover:shadow-card-hover'
           }`}
         >
           Tutte
@@ -52,10 +57,10 @@ const Guides = () => {
           <button
             key={cat.key}
             onClick={() => setActiveCategory(cat.key)}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs font-medium transition-all ${
+            className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-semibold transition-all ${
               activeCategory === cat.key
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-card text-muted-foreground shadow-card'
+                ? 'gradient-hero text-primary-foreground shadow-cta'
+                : 'bg-card text-muted-foreground shadow-card hover:shadow-card-hover'
             }`}
           >
             {cat.label}
@@ -66,10 +71,18 @@ const Guides = () => {
       {/* Guides list */}
       <div className="space-y-3 px-5">
         {filtered.length > 0 ? (
-          filtered.map((guide) => <GuideCard key={guide.id} guide={guide} />)
+          filtered.map((guide, i) => (
+            <div key={guide.id} className="animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
+              <GuideCard guide={guide} />
+            </div>
+          ))
         ) : (
-          <div className="py-12 text-center">
-            <p className="text-sm text-muted-foreground">Nessuna guida trovata. Prova con un'altra ricerca.</p>
+          <div className="py-16 text-center animate-fade-in">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-muted">
+              <Search className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium text-foreground">Nessuna guida trovata</p>
+            <p className="mt-1 text-xs text-muted-foreground">Prova con un'altra ricerca.</p>
           </div>
         )}
       </div>
