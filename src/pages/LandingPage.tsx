@@ -384,7 +384,7 @@ const LandingPage = () => {
             In 2 minuti creiamo il tuo percorso personalizzato. È gratuito.
           </p>
           <button
-            onClick={() => navigate('/onboarding')}
+            onClick={() => navigate('/auth')}
             className="inline-flex h-14 items-center gap-2.5 rounded-2xl bg-card px-10 text-base font-bold text-primary shadow-elevated transition-all hover:shadow-hero active:scale-95"
           >
             Inizia adesso — è gratis
