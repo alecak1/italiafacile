@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
@@ -13,9 +14,29 @@ import GuideDetail from "./pages/GuideDetail";
 import Community from "./pages/Community";
 import Profile from "./pages/Profile";
 import Onboarding from "./pages/Onboarding";
+import AuthPage from "./pages/AuthPage";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const RequireOnboarding = ({ children }: { children: React.ReactNode }) => {
   const onboardingComplete = localStorage.getItem('onboarding_complete');
@@ -25,25 +46,42 @@ const RequireOnboarding = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const AppRoutes = () => {
+  const { user, loading } = useAuth();
+
+  return (
+    <>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={user && !loading ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/guides" element={<Guides />} />
+        <Route path="/guide/:id" element={<GuideDetail />} />
+
+        {/* Protected routes */}
+        <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><RequireOnboarding><HomePage /></RequireOnboarding></ProtectedRoute>} />
+        <Route path="/journey" element={<ProtectedRoute><RequireOnboarding><Journey /></RequireOnboarding></ProtectedRoute>} />
+        <Route path="/step/:id" element={<ProtectedRoute><RequireOnboarding><StepDetail /></RequireOnboarding></ProtectedRoute>} />
+        <Route path="/community" element={<ProtectedRoute><RequireOnboarding><Community /></RequireOnboarding></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><RequireOnboarding><Profile /></RequireOnboarding></ProtectedRoute>} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <BottomNav />
+    </>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/dashboard" element={<RequireOnboarding><HomePage /></RequireOnboarding>} />
-          <Route path="/journey" element={<RequireOnboarding><Journey /></RequireOnboarding>} />
-          <Route path="/step/:id" element={<RequireOnboarding><StepDetail /></RequireOnboarding>} />
-          <Route path="/guides" element={<RequireOnboarding><Guides /></RequireOnboarding>} />
-          <Route path="/guide/:id" element={<RequireOnboarding><GuideDetail /></RequireOnboarding>} />
-          <Route path="/community" element={<RequireOnboarding><Community /></RequireOnboarding>} />
-          <Route path="/profile" element={<RequireOnboarding><Profile /></RequireOnboarding>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <BottomNav />
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

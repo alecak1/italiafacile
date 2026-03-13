@@ -1,14 +1,21 @@
-import { MapPin, Check, ArrowRight, Settings, ChevronRight } from 'lucide-react';
+import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { mockJourneySteps } from '@/data/mockData';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('user_name') || 'Utente';
+  const { user, signOut } = useAuth();
+  const userName = localStorage.getItem('user_name') || user?.user_metadata?.full_name || 'Utente';
   const completedSteps = mockJourneySteps.filter((s) => s.status === 'completed').length;
   const remainingSteps = mockJourneySteps.filter((s) => s.status !== 'completed').length;
   const totalSteps = mockJourneySteps.length;
   const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -16,12 +23,13 @@ const Profile = () => {
       <div className="relative overflow-hidden bg-card px-5 pb-6 pt-12">
         <div className="absolute inset-0 gradient-hero opacity-5" />
         <div className="relative flex items-center gap-4">
-          <div className="flex h-18 w-18 items-center justify-center rounded-2xl gradient-hero text-3xl font-extrabold text-primary-foreground shadow-hero"
+          <div className="flex items-center justify-center rounded-2xl gradient-hero text-3xl font-extrabold text-primary-foreground shadow-hero"
                style={{ width: '72px', height: '72px' }}>
             {userName.charAt(0).toUpperCase()}
           </div>
           <div>
             <h1 className="text-xl font-extrabold text-foreground">{userName}</h1>
+            <p className="text-xs text-muted-foreground">{user?.email}</p>
             <div className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
               <MapPin className="h-3.5 w-3.5" />
               Milano, Italia
@@ -96,10 +104,23 @@ const Profile = () => {
           className="flex w-full items-center justify-between rounded-2xl bg-card p-4 shadow-card transition-all hover:shadow-card-hover"
         >
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10">
-              <Settings className="h-4 w-4 text-destructive" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10">
+              <Settings className="h-4 w-4 text-warning" />
             </div>
             <span className="text-sm font-semibold text-foreground">Ricomincia onboarding</span>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </button>
+
+        <button
+          onClick={handleSignOut}
+          className="flex w-full items-center justify-between rounded-2xl bg-card p-4 shadow-card transition-all hover:shadow-card-hover"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10">
+              <LogOut className="h-4 w-4 text-destructive" />
+            </div>
+            <span className="text-sm font-semibold text-foreground">Esci</span>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground" />
         </button>

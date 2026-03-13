@@ -112,10 +112,10 @@ const LandingPage = () => {
             <span className="text-lg font-extrabold text-foreground tracking-tight">Trasferisciti</span>
           </div>
           <button
-            onClick={() => navigate('/onboarding')}
+            onClick={() => navigate('/auth')}
             className="flex h-10 items-center gap-2 rounded-xl gradient-hero px-5 text-sm font-bold text-primary-foreground shadow-cta transition-all hover:opacity-90 active:scale-95"
           >
-            Inizia gratis
+            Accedi
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -153,7 +153,7 @@ const LandingPage = () => {
             {/* CTA buttons */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
-                onClick={() => navigate('/onboarding')}
+                onClick={() => navigate('/auth')}
                 className="flex h-14 items-center justify-center gap-2.5 rounded-2xl gradient-hero px-8 text-base font-bold text-primary-foreground shadow-hero transition-all hover:opacity-90 active:scale-95"
               >
                 Inizia il tuo percorso
@@ -384,7 +384,7 @@ const LandingPage = () => {
             In 2 minuti creiamo il tuo percorso personalizzato. È gratuito.
           </p>
           <button
-            onClick={() => navigate('/onboarding')}
+            onClick={() => navigate('/auth')}
             className="inline-flex h-14 items-center gap-2.5 rounded-2xl bg-card px-10 text-base font-bold text-primary shadow-elevated transition-all hover:shadow-hero active:scale-95"
           >
             Inizia adesso — è gratis
