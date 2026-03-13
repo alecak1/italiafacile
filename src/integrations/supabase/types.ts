@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          already_in_country: boolean | null
+          created_at: string
+          destination_city: string | null
+          destination_country: string | null
+          has_tax_code: boolean | null
+          id: string
+          job_status: string | null
+          language_level: string | null
+          name: string | null
+          nationality: string | null
+          onboarding_completed: boolean | null
+          reason_for_moving: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          already_in_country?: boolean | null
+          created_at?: string
+          destination_city?: string | null
+          destination_country?: string | null
+          has_tax_code?: boolean | null
+          id?: string
+          job_status?: string | null
+          language_level?: string | null
+          name?: string | null
+          nationality?: string | null
+          onboarding_completed?: boolean | null
+          reason_for_moving?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          already_in_country?: boolean | null
+          created_at?: string
+          destination_city?: string | null
+          destination_country?: string | null
+          has_tax_code?: boolean | null
+          id?: string
+          job_status?: string | null
+          language_level?: string | null
+          name?: string | null
+          nationality?: string | null
+          onboarding_completed?: boolean | null
+          reason_for_moving?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
