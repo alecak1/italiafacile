@@ -153,7 +153,7 @@ const LandingPage = () => {
             {/* CTA buttons */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <button
-                onClick={() => navigate('/onboarding')}
+                onClick={() => navigate('/auth')}
                 className="flex h-14 items-center justify-center gap-2.5 rounded-2xl gradient-hero px-8 text-base font-bold text-primary-foreground shadow-hero transition-all hover:opacity-90 active:scale-95"
               >
                 Inizia il tuo percorso
