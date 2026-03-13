@@ -14,8 +14,9 @@ const BottomNav = () => {
   const navigate = useNavigate();
 
   // Hide on onboarding, step detail, guide detail
+  const hiddenPaths = ['/', '/auth', '/reset-password'];
   if (
-    location.pathname === '/' ||
+    hiddenPaths.includes(location.pathname) ||
     location.pathname.startsWith('/onboarding') ||
     location.pathname.startsWith('/step/') ||
     location.pathname.startsWith('/guide/')
