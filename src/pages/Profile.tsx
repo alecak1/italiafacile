@@ -52,7 +52,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-32">
       <div className="relative overflow-hidden bg-card px-6 pb-7 pt-12">
         <div className="absolute inset-0 gradient-hero opacity-[0.04]" />
         <div className="relative flex items-center gap-4">
