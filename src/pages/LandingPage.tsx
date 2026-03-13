@@ -74,22 +74,7 @@ const LandingPage = () => {
             <span className="text-lg font-extrabold text-foreground tracking-tight">Trasferisciti</span>
           </div>
           <div className="flex items-center gap-3">
-            {/* Language switcher */}
-            <div className="flex items-center gap-1 rounded-xl border border-border bg-background px-1.5 py-1">
-              {LANGUAGES.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => i18n.changeLanguage(lang.code)}
-                  className={`rounded-lg px-2 py-1 text-sm transition-all ${
-                    i18n.language === lang.code
-                      ? 'gradient-hero text-primary-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {lang.label}
-                </button>
-              ))}
-            </div>
+            <LanguageSelector />
             <button
               onClick={() => navigate('/auth')}
               className="flex h-10 items-center gap-2 rounded-xl gradient-hero px-5 text-sm font-bold text-primary-foreground shadow-cta transition-all hover:opacity-90 active:scale-95"
