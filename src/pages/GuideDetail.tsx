@@ -21,30 +21,30 @@ const GuideDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      <div className="sticky top-0 z-10 flex items-center gap-3 bg-background px-4 py-4">
-        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted">
+      <div className="sticky top-0 z-10 glass-strong border-b border-border/30 flex items-center gap-3 px-5 py-4">
+        <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors">
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
           {guide.readingTime}
         </div>
       </div>
 
-      <div className="px-5">
-        <h1 className="mb-2 text-2xl font-bold text-foreground animate-fade-in">{guide.title}</h1>
-        <p className="mb-6 text-sm text-muted-foreground">{guide.summary}</p>
+      <div className="px-6">
+        <h1 className="mb-3 pt-2 text-2xl font-black tracking-tight text-foreground animate-fade-in">{guide.title}</h1>
+        <p className="mb-8 text-sm leading-relaxed text-muted-foreground">{guide.summary}</p>
 
-        <div className="space-y-6">
+        <div className="space-y-8">
           {guide.sections.map((section, i) => (
             <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
-              <h2 className="mb-2 text-lg font-semibold text-foreground">{section.title}</h2>
-              <p className="mb-3 text-sm leading-relaxed text-muted-foreground">{section.content}</p>
+              <h2 className="mb-3 text-lg font-bold text-foreground">{section.title}</h2>
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{section.content}</p>
               {section.bullets && (
-                <ul className="space-y-2">
+                <ul className="space-y-2.5">
                   {section.bullets.map((bullet, j) => (
-                    <li key={j} className="flex items-start gap-2 text-sm text-foreground">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    <li key={j} className="flex items-start gap-2.5 text-sm text-foreground">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       {bullet}
                     </li>
                   ))}
@@ -55,20 +55,20 @@ const GuideDetail = () => {
         </div>
 
         {/* Next actions */}
-        <div className="mt-10 space-y-3">
+        <div className="mt-12 space-y-3 pb-4">
           {nextGuide && (
             <button
               onClick={() => navigate(`/guide/${nextGuide.id}`)}
-              className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-card transition-all hover:shadow-card-hover active:scale-[0.98]"
+              className="group flex w-full items-center gap-3.5 rounded-2xl border border-border/60 bg-card p-5 shadow-card transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 active:scale-[0.98]"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/10">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary/10">
                 <BookOpen className="h-5 w-5 text-secondary" />
               </div>
               <div className="flex-1 text-left">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Prossima guida</div>
-                <div className="text-sm font-bold text-foreground">{nextGuide.title}</div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Prossima guida</div>
+                <div className="mt-0.5 text-sm font-bold text-foreground">{nextGuide.title}</div>
               </div>
-              <ArrowRight className="h-5 w-5 text-muted-foreground" />
+              <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
             </button>
           )}
 

@@ -69,22 +69,22 @@ const AuthPage = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-5 py-4">
+      <div className="flex items-center gap-2.5 px-6 py-5">
         <button onClick={() => navigate('/')} className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl gradient-hero">
             <MapPin className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-extrabold text-foreground tracking-tight">Trasferisciti</span>
+          <span className="text-lg font-black text-foreground tracking-tight">Trasferisciti</span>
         </button>
       </div>
 
-      <div className="flex flex-1 items-center justify-center px-5 py-8">
+      <div className="flex flex-1 items-center justify-center px-6 py-8">
         <div className="w-full max-w-sm animate-fade-in">
-          <div className="mb-8 text-center">
-            <h1 className="text-2xl font-extrabold text-foreground">
+          <div className="mb-10 text-center">
+            <h1 className="text-2xl font-black tracking-tight text-foreground">
               {resetMode ? 'Recupera password' : isLogin ? 'Bentornato!' : 'Crea il tuo account'}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
               {resetMode
                 ? 'Inserisci la tua email per ricevere il link di recupero.'
                 : isLogin
@@ -99,7 +99,8 @@ const AuthPage = () => {
               <button
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl border-2 border-border bg-card text-sm font-semibold text-foreground transition-all hover:shadow-card-hover active:scale-[0.98] disabled:opacity-50"
+                className="flex h-13 w-full items-center justify-center gap-3 rounded-2xl border-2 border-border bg-card text-sm font-semibold text-foreground transition-all duration-200 hover:shadow-card-hover hover:border-border active:scale-[0.98] disabled:opacity-50"
+                style={{ height: '52px' }}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -110,18 +111,18 @@ const AuthPage = () => {
                 Continua con Google
               </button>
 
-              <div className="my-6 flex items-center gap-3">
+              <div className="my-7 flex items-center gap-4">
                 <div className="h-px flex-1 bg-border" />
-                <span className="text-xs text-muted-foreground">oppure</span>
+                <span className="text-xs font-medium text-muted-foreground">oppure</span>
                 <div className="h-px flex-1 bg-border" />
               </div>
             </>
           )}
 
           {/* Email form */}
-          <form onSubmit={handleEmailAuth} className="space-y-3">
+          <form onSubmit={handleEmailAuth} className="space-y-3.5">
             {!isLogin && !resetMode && (
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3 focus-within:border-primary">
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
                 <User className="h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
@@ -134,7 +135,7 @@ const AuthPage = () => {
               </div>
             )}
 
-            <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3 focus-within:border-primary">
+            <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
               <Mail className="h-4 w-4 text-muted-foreground" />
               <input
                 type="email"
@@ -147,7 +148,7 @@ const AuthPage = () => {
             </div>
 
             {!resetMode && (
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3 focus-within:border-primary">
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -158,7 +159,7 @@ const AuthPage = () => {
                   required
                   minLength={6}
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-muted-foreground">
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-muted-foreground hover:text-foreground transition-colors">
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -177,21 +178,21 @@ const AuthPage = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl gradient-hero text-sm font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-50"
+              className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
             >
               {loading ? (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
               ) : (
                 <>
                   {resetMode ? 'Invia email di recupero' : isLogin ? 'Accedi' : 'Registrati'}
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </>
               )}
             </button>
           </form>
 
           {/* Toggle */}
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="mt-8 text-center text-sm text-muted-foreground">
             {resetMode ? (
               <button onClick={() => setResetMode(false)} className="font-semibold text-secondary hover:underline">
                 Torna al login
