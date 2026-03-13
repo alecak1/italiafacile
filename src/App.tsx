@@ -70,6 +70,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProtectedRoute><RequireOnboarding><Profile /></RequireOnboarding></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <AppHeader />
       <BottomNav />
     </>
   );
