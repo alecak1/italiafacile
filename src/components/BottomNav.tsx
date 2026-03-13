@@ -1,16 +1,18 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Map, BookOpen, Users } from 'lucide-react';
-
-const navItems = [
-  { path: '/dashboard', label: 'Home', icon: Home },
-  { path: '/journey', label: 'Percorso', icon: Map },
-  { path: '/guides', label: 'Guide', icon: BookOpen },
-  { path: '/community', label: 'Community', icon: Users },
-];
+import { useTranslation } from 'react-i18next';
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { path: '/dashboard', label: t('nav.home'), icon: Home },
+    { path: '/journey', label: t('nav.journey'), icon: Map },
+    { path: '/guides', label: t('nav.guides'), icon: BookOpen },
+    { path: '/community', label: t('nav.community'), icon: Users },
+  ];
 
   const hiddenPaths = ['/', '/auth', '/reset-password'];
   if (

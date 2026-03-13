@@ -1,4 +1,5 @@
 import { MessageCircle, ThumbsUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Question } from '@/types';
 
 interface QuestionCardProps {
@@ -6,6 +7,8 @@ interface QuestionCardProps {
 }
 
 const QuestionCard = ({ question }: QuestionCardProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-card transition-all hover:shadow-card-hover">
       <div className="mb-3 flex items-center gap-2.5">
@@ -36,14 +39,14 @@ const QuestionCard = ({ question }: QuestionCardProps) => {
           ))}
           {question.answers.length > 1 && (
             <button className="text-xs font-semibold text-secondary hover:underline">
-              +{question.answers.length - 1} altre risposte
+              {t('community.moreAnswers', { count: question.answers.length - 1 })}
             </button>
           )}
         </div>
       ) : (
         <div className="flex items-center gap-2 rounded-xl bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
           <MessageCircle className="h-3.5 w-3.5" />
-          <span>Nessuna risposta ancora. Sii il primo!</span>
+          <span>{t('community.noAnswers')}</span>
         </div>
       )}
     </div>

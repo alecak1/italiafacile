@@ -1,5 +1,6 @@
 import { FileText, Home as HomeIcon, HelpCircle, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import ProgressCard from '@/components/ProgressCard';
 import GuideCard from '@/components/GuideCard';
 import { useProfile } from '@/hooks/useProfile';
@@ -9,6 +10,7 @@ import heroIllustration from '@/assets/hero-illustration.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { profile } = useProfile();
   const { steps } = useJourney(profile?.corridor_id);
   const { guides } = useGuides(profile?.corridor_id);
@@ -16,14 +18,13 @@ const HomePage = () => {
   const currentStep = steps.find((s) => s.status === 'current');
 
   const quickActions = [
-    { label: 'Documenti', desc: 'Guida completa', icon: FileText, path: '/guides', color: 'bg-secondary/10 text-secondary' },
-    { label: 'Affitti', desc: 'Trova casa', icon: HomeIcon, path: '/guides', color: 'bg-warning/10 text-warning' },
-    { label: 'Domande', desc: 'Community', icon: HelpCircle, path: '/community', color: 'bg-primary/10 text-primary' },
+    { label: t('home.documents'), desc: t('home.documentsDesc'), icon: FileText, path: '/guides', color: 'bg-secondary/10 text-secondary' },
+    { label: t('home.rent'), desc: t('home.rentDesc'), icon: HomeIcon, path: '/guides', color: 'bg-warning/10 text-warning' },
+    { label: t('home.questions'), desc: t('home.questionsDesc'), icon: HelpCircle, path: '/community', color: 'bg-primary/10 text-primary' },
   ];
 
   const recentGuides = guides.slice(0, 3);
 
-  // Map DB guides to the format GuideCard expects
   const mapGuide = (g: typeof guides[0]) => ({
     id: g.id,
     title: g.title,
@@ -33,7 +34,6 @@ const HomePage = () => {
     sections: g.sections,
   });
 
-  // Map steps to the format ProgressCard expects
   const mapSteps = steps.map((s) => ({
     id: s.id,
     order: s.step_order,
@@ -51,24 +51,21 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Hero section */}
       <div className="relative overflow-hidden bg-card px-6 pb-7 pt-12">
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)',
           backgroundSize: '28px 28px'
         }} />
-
         <div className="relative flex items-start justify-between gap-4">
           <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground">Ciao 👋</p>
+            <p className="text-sm font-medium text-muted-foreground">{t('home.greeting')}</p>
             <h1 className="mt-1.5 text-3xl font-black tracking-tight text-foreground">{userName}</h1>
             <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground max-w-[260px]">
-              Il tuo assistente per trasferirti in {profile?.destination_country || 'Italia'}. Ogni passo, spiegato semplice.
+              {t('home.subtitle', { country: profile?.destination_country || 'Italia' })}
             </p>
           </div>
-          <img src={heroIllustration} alt="Illustrazione viaggio" className="h-24 w-24 object-contain opacity-85 animate-fade-in" />
+          <img src={heroIllustration} alt="" className="h-24 w-24 object-contain opacity-85 animate-fade-in" />
         </div>
-
         {currentStep && (
           <button
             onClick={() => navigate(`/step/${currentStep.id}`)}
@@ -79,7 +76,7 @@ const HomePage = () => {
               <Sparkles className="h-5 w-5" />
             </div>
             <div className="flex-1">
-              <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">Inizia da qui</div>
+              <div className="text-[10px] font-bold uppercase tracking-widest opacity-60">{t('home.startHere')}</div>
               <div className="mt-0.5 text-[15px] font-bold">{currentStep.title}</div>
             </div>
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white text-primary shadow-xs">
@@ -92,9 +89,8 @@ const HomePage = () => {
       <div className="space-y-8 px-6 py-7">
         {mapSteps.length > 0 && <ProgressCard steps={mapSteps} userName={userName} />}
 
-        {/* Quick actions */}
         <div>
-          <h2 className="mb-4 text-lg font-bold text-foreground">Azioni rapide</h2>
+          <h2 className="mb-4 text-lg font-bold text-foreground">{t('home.quickActions')}</h2>
           <div className="grid grid-cols-3 gap-3">
             {quickActions.map((action, i) => {
               const Icon = action.icon;
@@ -118,13 +114,12 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* Recent guides */}
         {recentGuides.length > 0 && (
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-foreground">Guide utili</h2>
+              <h2 className="text-lg font-bold text-foreground">{t('home.usefulGuides')}</h2>
               <button onClick={() => navigate('/guides')} className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
-                Vedi tutte <ChevronRight className="h-3.5 w-3.5" />
+                {t('home.seeAll')} <ChevronRight className="h-3.5 w-3.5" />
               </button>
             </div>
             <div className="space-y-3">
@@ -137,7 +132,6 @@ const HomePage = () => {
           </div>
         )}
 
-        {/* Community teaser */}
         <button
           onClick={() => navigate('/community')}
           className="group flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-border bg-card/50 p-6 text-left transition-all duration-200 hover:border-secondary/40 hover:bg-card hover:shadow-card-hover"
@@ -146,8 +140,8 @@ const HomePage = () => {
             <HelpCircle className="h-6 w-6 text-secondary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold text-foreground">Hai una domanda?</p>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Chiedi alla community e ricevi risposte da chi ci è già passato.</p>
+            <p className="text-sm font-bold text-foreground">{t('home.haveQuestion')}</p>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{t('home.askCommunity')}</p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
         </button>
