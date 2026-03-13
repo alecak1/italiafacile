@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save, Globe } from 'lucide-react';
+import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,12 +7,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-const LANGUAGES = [
-  { code: 'it', label: '🇮🇹 Italiano' },
-  { code: 'en', label: '🇬🇧 English' },
-  { code: 'bg', label: '🇧🇬 Български' },
-];
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -57,7 +52,6 @@ const Profile = () => {
   };
 
   const handleLanguageChange = async (langCode: string) => {
-    i18n.changeLanguage(langCode);
     await updateProfile({ preferred_language: langCode } as any);
   };
 
@@ -145,21 +139,9 @@ const Profile = () => {
       <div className="px-6 pt-5">
         <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-card">
           <div className="flex items-center gap-2 mb-3">
-            <Globe className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('profile.language')}</span>
           </div>
-          <div className="flex gap-2">
-            {LANGUAGES.map((lang) => (
-              <button key={lang.code} onClick={() => handleLanguageChange(lang.code)}
-                className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all ${
-                  i18n.language === lang.code
-                    ? 'gradient-hero text-primary-foreground shadow-cta'
-                    : 'border border-border bg-background text-muted-foreground hover:text-foreground hover:border-primary/30'
-                }`}>
-                {lang.label}
-              </button>
-            ))}
-          </div>
+          <LanguageSelector variant="full" onLanguageChange={handleLanguageChange} />
         </div>
       </div>
 
