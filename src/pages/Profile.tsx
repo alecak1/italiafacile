@@ -1,8 +1,11 @@
-import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const REASON_LABELS: Record<string, string> = {
   work: '💼 Lavoro',
@@ -27,8 +30,10 @@ const JOB_LABELS: Record<string, string> = {
 const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { profile } = useProfile();
+  const { profile, updateProfile } = useProfile();
   const { steps } = useJourney(profile?.corridor_id);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
 
   const userName = profile?.name || user?.user_metadata?.full_name || 'Utente';
   const completedSteps = steps.filter((s) => s.status === 'completed').length;
@@ -41,6 +46,43 @@ const Profile = () => {
     localStorage.removeItem('user_name');
     await signOut();
     navigate('/');
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Seleziona un file immagine.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('L\'immagine deve essere inferiore a 2MB.');
+      return;
+    }
+
+    setUploading(true);
+    const ext = file.name.split('.').pop();
+    const filePath = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast.error('Errore nel caricamento della foto.');
+      setUploading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath);
+
+    const avatarUrl = `${publicUrl}?t=${Date.now()}`;
+    await updateProfile({ avatar_url: avatarUrl } as any);
+    toast.success('Foto aggiornata!');
+    setUploading(false);
   };
 
   const infoItems = [
@@ -56,10 +98,33 @@ const Profile = () => {
       <div className="relative overflow-hidden bg-card px-6 pb-7 pt-12">
         <div className="absolute inset-0 gradient-hero opacity-[0.04]" />
         <div className="relative flex items-center gap-4">
-          <div className="flex items-center justify-center rounded-2xl gradient-hero text-3xl font-black text-primary-foreground shadow-hero"
-               style={{ width: '72px', height: '72px' }}>
-            {userName.charAt(0).toUpperCase()}
-          </div>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="relative flex items-center justify-center rounded-2xl gradient-hero text-3xl font-black text-primary-foreground shadow-hero overflow-hidden group"
+            style={{ width: '72px', height: '72px' }}
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Avatar" className="h-full w-full object-cover" />
+            ) : (
+              userName.charAt(0).toUpperCase()
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Camera className="h-5 w-5 text-white" />
+            </div>
+            {uploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              </div>
+            )}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleAvatarUpload}
+          />
           <div>
             <h1 className="text-xl font-black text-foreground">{userName}</h1>
             <p className="text-xs text-muted-foreground">{user?.email}</p>

@@ -1,12 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Map, BookOpen, Users, User } from 'lucide-react';
+import { Home, Map, BookOpen, Users } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Home', icon: Home },
   { path: '/journey', label: 'Percorso', icon: Map },
   { path: '/guides', label: 'Guide', icon: BookOpen },
   { path: '/community', label: 'Community', icon: Users },
-  { path: '/profile', label: 'Profilo', icon: User },
 ];
 
 const BottomNav = () => {

@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
+import AppHeader from "@/components/AppHeader";
 import LandingPage from "./pages/LandingPage";
 import HomePage from "./pages/HomePage";
 import Journey from "./pages/Journey";
@@ -69,6 +70,7 @@ const AppRoutes = () => {
         <Route path="/profile" element={<ProtectedRoute><RequireOnboarding><Profile /></RequireOnboarding></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <AppHeader />
       <BottomNav />
     </>
   );
