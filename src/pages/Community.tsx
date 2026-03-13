@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Plus, Users, MessageCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import QuestionCard from '@/components/QuestionCard';
 import { useProfile } from '@/hooks/useProfile';
 import { useCommunity } from '@/hooks/useCommunity';
 import { toast } from 'sonner';
 
 const Community = () => {
+  const { t } = useTranslation();
   const { profile } = useProfile();
   const { questions, loading, addQuestion } = useCommunity(profile?.corridor_id);
   const [showForm, setShowForm] = useState(false);
@@ -17,16 +19,15 @@ const Community = () => {
     setSubmitting(true);
     const { error } = await addQuestion(newQuestion.trim());
     if (error) {
-      toast.error('Errore nel pubblicare la domanda.');
+      toast.error(t('community.publishError'));
     } else {
       setNewQuestion('');
       setShowForm(false);
-      toast.success('Domanda pubblicata!');
+      toast.success(t('community.published'));
     }
     setSubmitting(false);
   };
 
-  // Map DB questions to QuestionCard format
   const mappedQuestions = questions.map((q) => ({
     id: q.id,
     authorName: q.author_name || 'Utente',
@@ -50,47 +51,37 @@ const Community = () => {
             <Users className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-foreground">Community</h1>
-            <p className="text-sm text-muted-foreground">Domande e risposte da chi ci è passato.</p>
+            <h1 className="text-2xl font-black tracking-tight text-foreground">{t('community.title')}</h1>
+            <p className="text-sm text-muted-foreground">{t('community.subtitle')}</p>
           </div>
         </div>
       </div>
 
       <div className="px-6 py-5">
         {!showForm ? (
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in"
-          >
+          <button onClick={() => setShowForm(true)}
+            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in">
             <Plus className="h-5 w-5" />
-            Fai una domanda alla community
+            {t('community.askQuestion')}
           </button>
         ) : (
           <div className="space-y-4 rounded-2xl border border-border/60 bg-card p-6 shadow-elevated animate-scale-in">
             <div className="flex items-center gap-2 mb-1">
               <MessageCircle className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold text-foreground">La tua domanda</span>
+              <span className="text-sm font-semibold text-foreground">{t('community.yourQuestion')}</span>
             </div>
-            <textarea
-              value={newQuestion}
-              onChange={(e) => setNewQuestion(e.target.value)}
-              placeholder="Scrivi la tua domanda qui..."
+            <textarea value={newQuestion} onChange={(e) => setNewQuestion(e.target.value)}
+              placeholder={t('community.placeholder')}
               className="h-28 w-full resize-none rounded-xl border border-border bg-background p-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-              autoFocus
-            />
+              autoFocus />
             <div className="flex gap-3">
-              <button
-                onClick={() => { setShowForm(false); setNewQuestion(''); }}
-                className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-              >
-                Annulla
+              <button onClick={() => { setShowForm(false); setNewQuestion(''); }}
+                className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
+                {t('community.cancel')}
               </button>
-              <button
-                onClick={handleSubmit}
-                disabled={!newQuestion.trim() || submitting}
-                className="flex-1 rounded-xl gradient-hero py-3.5 text-sm font-bold text-primary-foreground shadow-cta disabled:opacity-40 disabled:shadow-none transition-all"
-              >
-                {submitting ? 'Pubblicazione...' : 'Pubblica'}
+              <button onClick={handleSubmit} disabled={!newQuestion.trim() || submitting}
+                className="flex-1 rounded-xl gradient-hero py-3.5 text-sm font-bold text-primary-foreground shadow-cta disabled:opacity-40 disabled:shadow-none transition-all">
+                {submitting ? t('community.publishing') : t('community.publish')}
               </button>
             </div>
           </div>
@@ -113,8 +104,8 @@ const Community = () => {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-muted">
               <MessageCircle className="h-7 w-7 text-muted-foreground" />
             </div>
-            <p className="text-sm font-semibold text-foreground">Nessuna domanda ancora</p>
-            <p className="mt-1 text-xs text-muted-foreground">Fai la prima domanda alla community!</p>
+            <p className="text-sm font-semibold text-foreground">{t('community.noQuestions')}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t('community.beFirst')}</p>
           </div>
         )}
       </div>
