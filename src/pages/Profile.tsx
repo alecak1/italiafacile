@@ -52,7 +52,6 @@ const Profile = () => {
   };
 
   const handleLanguageChange = async (langCode: string) => {
-    i18n.changeLanguage(langCode);
     await updateProfile({ preferred_language: langCode } as any);
   };
 
