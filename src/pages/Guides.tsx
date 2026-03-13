@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Search, BookOpen } from 'lucide-react';
+import { Search, BookOpen, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import GuideCard from '@/components/GuideCard';
 import { mockGuides } from '@/data/mockData';
 import { GUIDE_CATEGORIES, GuideCategory } from '@/types';

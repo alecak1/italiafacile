@@ -44,6 +44,25 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Continue journey CTA */}
+      {remainingSteps > 0 && (
+        <div className="px-5 pt-5">
+          <button
+            onClick={() => navigate('/journey')}
+            className="flex w-full items-center gap-3 rounded-2xl gradient-hero p-4 text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
+              <ArrowRight className="h-5 w-5" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="text-[10px] font-bold uppercase tracking-widest opacity-70">Continua il percorso</div>
+              <div className="text-sm font-bold">{remainingSteps} passi rimanenti</div>
+            </div>
+            <ChevronRight className="h-5 w-5 opacity-70" />
+          </button>
+        </div>
+      )}
+
       {/* Stats */}
       <div className="px-5 py-5">
         <div className="grid grid-cols-2 gap-3">

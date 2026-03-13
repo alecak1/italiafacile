@@ -26,10 +26,10 @@ const Community = () => {
         {!showForm ? (
           <button
             onClick={() => setShowForm(true)}
-            className="flex h-14 w-full items-center justify-center gap-2 rounded-2xl gradient-hero text-sm font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98]"
+            className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in"
           >
             <Plus className="h-5 w-5" />
-            Fai una domanda
+            Fai una domanda alla community
           </button>
         ) : (
           <div className="space-y-3 rounded-2xl bg-card p-5 shadow-elevated animate-scale-in">
