@@ -59,7 +59,7 @@ const Onboarding = () => {
       // Complete onboarding
       localStorage.setItem('onboarding_complete', 'true');
       localStorage.setItem('user_name', data.name);
-      navigate('/');
+      navigate('/dashboard');
     }
   };
 
