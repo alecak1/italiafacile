@@ -56,7 +56,6 @@ const Onboarding = () => {
     if (step < STEPS.length - 1) {
       setStep(step + 1);
     } else {
-      // Complete onboarding
       localStorage.setItem('onboarding_complete', 'true');
       localStorage.setItem('user_name', data.name);
       navigate('/dashboard');
@@ -68,14 +67,20 @@ const Onboarding = () => {
   }) => (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-all ${
+      className={`flex w-full items-center gap-3.5 rounded-2xl border-2 p-4 text-left transition-all duration-200 ${
         selected
           ? 'border-primary bg-primary/5 shadow-card-hover'
-          : 'border-border bg-card hover:border-primary/30'
+          : 'border-border bg-card hover:border-primary/30 hover:shadow-card'
       }`}
     >
-      {icon && <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>{icon}</div>}
-      <span className="text-sm font-medium">{children}</span>
+      {icon && (
+        <div className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
+          selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+        }`}>
+          {icon}
+        </div>
+      )}
+      <span className={`text-sm font-medium ${selected ? 'text-foreground' : 'text-muted-foreground'}`}>{children}</span>
     </button>
   );
 
@@ -85,15 +90,15 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Come ti chiami?</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Useremo il tuo nome per personalizzare l'esperienza.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Come ti chiami?</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Useremo il tuo nome per personalizzare l'esperienza.</p>
             </div>
             <input
               type="text"
               value={data.name}
               onChange={(e) => setData({ ...data, name: e.target.value })}
               placeholder="Il tuo nome"
-              className="w-full rounded-2xl border-2 border-border bg-card px-4 py-4 text-base font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-0"
+              className="w-full rounded-2xl border-2 border-border bg-card px-5 py-4 text-base font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
               autoFocus
             />
           </div>
@@ -103,8 +108,8 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Da dove vieni?</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Questo ci aiuta a personalizzare le informazioni per te.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Da dove vieni?</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Questo ci aiuta a personalizzare le informazioni per te.</p>
             </div>
             <div className="space-y-3">
               {['Bulgaria', 'Romania', 'Altro'].map((n) => (
@@ -120,11 +125,11 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Dove ti trasferisci?</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Indica la città di destinazione.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Dove ti trasferisci?</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Indica la città di destinazione.</p>
             </div>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-4 py-3">
+              <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-5 py-3.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <input
                   type="text"
@@ -134,7 +139,7 @@ const Onboarding = () => {
                   className="flex-1 bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
                 />
               </div>
-              <p className="text-sm font-medium text-foreground">Sei già in Italia?</p>
+              <p className="text-sm font-semibold text-foreground">Sei già in Italia?</p>
               <div className="grid grid-cols-2 gap-3">
                 <OptionButton value="yes" selected={data.alreadyInCountry === 'yes'} onClick={() => setData({ ...data, alreadyInCountry: 'yes' })}>Sì</OptionButton>
                 <OptionButton value="no" selected={data.alreadyInCountry === 'no'} onClick={() => setData({ ...data, alreadyInCountry: 'no' })}>No</OptionButton>
@@ -147,8 +152,8 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Perché ti trasferisci?</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Questo ci aiuta a creare il percorso giusto per te.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Perché ti trasferisci?</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Questo ci aiuta a creare il percorso giusto per te.</p>
             </div>
             <div className="space-y-3">
               <OptionButton value="work" selected={data.reasonForMoving === 'work'} onClick={() => setData({ ...data, reasonForMoving: 'work' })} icon={<Briefcase className="h-5 w-5" />}>
@@ -168,27 +173,31 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">La tua situazione attuale</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Aiutaci a capire da dove parti.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">La tua situazione attuale</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Aiutaci a capire da dove parti.</p>
             </div>
-            <div className="space-y-4">
-              <p className="text-sm font-medium text-foreground">Hai già il codice fiscale italiano?</p>
-              <div className="grid grid-cols-2 gap-3">
-                <OptionButton value="yes" selected={data.hasTaxCode === 'yes'} onClick={() => setData({ ...data, hasTaxCode: 'yes' })}>Sì</OptionButton>
-                <OptionButton value="no" selected={data.hasTaxCode === 'no'} onClick={() => setData({ ...data, hasTaxCode: 'no' })}>No</OptionButton>
+            <div className="space-y-5">
+              <div>
+                <p className="mb-3 text-sm font-semibold text-foreground">Hai già il codice fiscale italiano?</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <OptionButton value="yes" selected={data.hasTaxCode === 'yes'} onClick={() => setData({ ...data, hasTaxCode: 'yes' })}>Sì</OptionButton>
+                  <OptionButton value="no" selected={data.hasTaxCode === 'no'} onClick={() => setData({ ...data, hasTaxCode: 'no' })}>No</OptionButton>
+                </div>
               </div>
-              <p className="text-sm font-medium text-foreground">Situazione lavorativa</p>
-              <div className="space-y-3">
-                {[
-                  { value: 'employed', label: 'Ho un lavoro' },
-                  { value: 'unemployed', label: 'Cerco lavoro' },
-                  { value: 'student', label: 'Studente' },
-                  { value: 'freelance', label: 'Libero professionista' },
-                ].map((opt) => (
-                  <OptionButton key={opt.value} value={opt.value} selected={data.jobStatus === opt.value} onClick={() => setData({ ...data, jobStatus: opt.value })}>
-                    {opt.label}
-                  </OptionButton>
-                ))}
+              <div>
+                <p className="mb-3 text-sm font-semibold text-foreground">Situazione lavorativa</p>
+                <div className="space-y-3">
+                  {[
+                    { value: 'employed', label: 'Ho un lavoro' },
+                    { value: 'unemployed', label: 'Cerco lavoro' },
+                    { value: 'student', label: 'Studente' },
+                    { value: 'freelance', label: 'Libero professionista' },
+                  ].map((opt) => (
+                    <OptionButton key={opt.value} value={opt.value} selected={data.jobStatus === opt.value} onClick={() => setData({ ...data, jobStatus: opt.value })}>
+                      {opt.label}
+                    </OptionButton>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -198,8 +207,8 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Parli italiano?</h1>
-              <p className="mt-2 text-sm text-muted-foreground">Il tuo livello ci aiuta a darti consigli migliori.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Parli italiano?</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Il tuo livello ci aiuta a darti consigli migliori.</p>
             </div>
             <div className="space-y-3">
               {[
@@ -221,34 +230,34 @@ const Onboarding = () => {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       {/* Progress bar */}
-      <div className="sticky top-0 z-10 bg-background px-4 pt-4">
+      <div className="sticky top-0 z-10 glass-strong border-b border-border/30 px-5 pt-5 pb-4">
         <div className="flex items-center gap-3">
           {step > 0 && (
-            <button onClick={() => setStep(step - 1)} className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-muted">
+            <button onClick={() => setStep(step - 1)} className="flex h-9 w-9 items-center justify-center rounded-full text-foreground hover:bg-muted transition-colors">
               <ArrowLeft className="h-5 w-5" />
             </button>
           )}
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border">
-            <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }} />
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full gradient-hero transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
           </div>
-          <span className="text-xs font-medium text-muted-foreground">{step + 1}/{STEPS.length}</span>
+          <span className="text-xs font-semibold text-muted-foreground">{step + 1}/{STEPS.length}</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 px-5 py-8">
+      <div className="flex-1 px-6 py-8">
         {renderStep()}
       </div>
 
       {/* CTA */}
-      <div className="sticky bottom-0 bg-background px-5 pb-8 pt-4">
+      <div className="sticky bottom-0 glass-strong border-t border-border/30 px-6 pb-8 pt-5">
         <button
           onClick={handleNext}
           disabled={!canContinue()}
-          className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all disabled:opacity-40"
+          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
           {step === STEPS.length - 1 ? 'Inizia il tuo percorso' : 'Continua'}
-          <ArrowRight className="h-4 w-4" />
+          <ArrowRight className="h-5 w-5" />
         </button>
       </div>
     </div>

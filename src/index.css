@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,14 +6,14 @@
 
 @layer base {
   :root {
-    --background: 36 56% 97%;
-    --foreground: 215 28% 17%;
+    --background: 40 33% 97%;
+    --foreground: 220 25% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 28% 17%;
+    --card-foreground: 220 25% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 28% 17%;
+    --popover-foreground: 220 25% 14%;
 
     --primary: 146 51% 36%;
     --primary-foreground: 0 0% 100%;
@@ -21,38 +21,42 @@
     --secondary: 223 100% 59%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 20% 96%;
+    --muted-foreground: 220 12% 50%;
 
-    --accent: 36 56% 94%;
-    --accent-foreground: 215 28% 17%;
+    --accent: 40 40% 95%;
+    --accent-foreground: 220 25% 14%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 71% 45%;
+    --success: 152 60% 42%;
     --success-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 220 16% 92%;
+    --input: 220 16% 92%;
     --ring: 146 51% 36%;
 
     --radius: 0.75rem;
 
     --primary-glow: 146 60% 42%;
     --secondary-glow: 223 100% 65%;
-    --gradient-hero: linear-gradient(135deg, hsl(146 51% 36%), hsl(146 60% 42%), hsl(160 50% 40%));
-    --gradient-secondary: linear-gradient(135deg, hsl(223 100% 59%), hsl(223 100% 65%));
-    --gradient-warm: linear-gradient(135deg, hsl(36 80% 96%), hsl(30 60% 94%));
 
-    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
-    --shadow-card-hover: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
-    --shadow-elevated: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-    --shadow-hero: 0 20px 40px -12px rgba(46, 139, 87, 0.25);
-    --shadow-cta: 0 4px 14px -3px rgba(46, 139, 87, 0.4);
+    --gradient-hero: linear-gradient(135deg, hsl(146 51% 36%), hsl(152 55% 38%), hsl(160 48% 40%));
+    --gradient-secondary: linear-gradient(135deg, hsl(223 100% 59%), hsl(223 100% 65%));
+    --gradient-warm: linear-gradient(135deg, hsl(40 50% 97%), hsl(35 45% 95%));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+    --shadow-card-hover: 0 8px 24px -4px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
+    --shadow-elevated: 0 12px 32px -8px rgba(0, 0, 0, 0.1), 0 4px 8px -4px rgba(0, 0, 0, 0.04);
+    --shadow-hero: 0 24px 48px -12px rgba(46, 139, 87, 0.2), 0 8px 16px -8px rgba(46, 139, 87, 0.1);
+    --shadow-cta: 0 6px 20px -4px rgba(46, 139, 87, 0.35);
+    --shadow-float: 0 20px 40px -12px rgba(0, 0, 0, 0.12), 0 8px 16px -8px rgba(0, 0, 0, 0.06);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -73,10 +77,15 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
 @layer utilities {
+  .shadow-xs {
+    box-shadow: var(--shadow-xs);
+  }
   .shadow-card {
     box-shadow: var(--shadow-card);
   }
@@ -92,6 +101,9 @@
   .shadow-cta {
     box-shadow: var(--shadow-cta);
   }
+  .shadow-float {
+    box-shadow: var(--shadow-float);
+  }
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -104,11 +116,24 @@
   .gradient-warm {
     background: var(--gradient-warm);
   }
+  .gradient-glass {
+    background: var(--gradient-glass);
+  }
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
   .scrollbar-none {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
 }
