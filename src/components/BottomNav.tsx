@@ -15,6 +15,7 @@ const BottomNav = () => {
 
   // Hide on onboarding, step detail, guide detail
   if (
+    location.pathname === '/' ||
     location.pathname.startsWith('/onboarding') ||
     location.pathname.startsWith('/step/') ||
     location.pathname.startsWith('/guide/')
