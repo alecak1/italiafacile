@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, Map, BookOpen, Users, User } from 'lucide-react';
 
 const navItems = [
-  { path: '/', label: 'Home', icon: Home },
+  { path: '/dashboard', label: 'Home', icon: Home },
   { path: '/journey', label: 'Percorso', icon: Map },
   { path: '/guides', label: 'Guide', icon: BookOpen },
   { path: '/community', label: 'Community', icon: Users },
