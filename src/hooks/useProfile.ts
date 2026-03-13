@@ -16,6 +16,7 @@ export interface Profile {
   language_level: string | null;
   onboarding_completed: boolean | null;
   corridor_id: string | null;
+  avatar_url: string | null;
 }
 
 export function useProfile() {
