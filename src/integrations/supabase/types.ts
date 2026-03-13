@@ -167,6 +167,7 @@ export type Database = {
       profiles: {
         Row: {
           already_in_country: boolean | null
+          avatar_url: string | null
           corridor_id: string | null
           created_at: string
           destination_city: string | null
@@ -184,6 +185,7 @@ export type Database = {
         }
         Insert: {
           already_in_country?: boolean | null
+          avatar_url?: string | null
           corridor_id?: string | null
           created_at?: string
           destination_city?: string | null
@@ -201,6 +203,7 @@ export type Database = {
         }
         Update: {
           already_in_country?: boolean | null
+          avatar_url?: string | null
           corridor_id?: string | null
           created_at?: string
           destination_city?: string | null
