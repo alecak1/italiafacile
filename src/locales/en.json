@@ -69,7 +69,10 @@
     "finalCtaDesc": "In 2 minutes we create your personalized journey. It's free.",
     "finalCtaButton": "Start now — it's free",
     "noCreditCard": "No credit card required",
-    "footer": "© 2026 Trasferisciti. All rights reserved."
+    "footer": "© 2026 Trasferisciti. All rights reserved.",
+    "testimonial1": "Without this guide I'd still be queuing at the wrong office. It saved me weeks of stress.",
+    "testimonial2": "Finally someone who explains Italian bureaucracy simply. Every step was clear.",
+    "testimonial3": "The community helped me so much. I found answers to questions I didn't even know I had."
   },
   "auth": {
     "welcome": "Welcome back!",
