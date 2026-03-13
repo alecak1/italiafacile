@@ -180,6 +180,7 @@ export type Database = {
           name: string | null
           nationality: string | null
           onboarding_completed: boolean | null
+          preferred_language: string | null
           reason_for_moving: string | null
           social_facebook: string | null
           social_instagram: string | null
@@ -202,6 +203,7 @@ export type Database = {
           name?: string | null
           nationality?: string | null
           onboarding_completed?: boolean | null
+          preferred_language?: string | null
           reason_for_moving?: string | null
           social_facebook?: string | null
           social_instagram?: string | null
@@ -224,6 +226,7 @@ export type Database = {
           name?: string | null
           nationality?: string | null
           onboarding_completed?: boolean | null
+          preferred_language?: string | null
           reason_for_moving?: string | null
           social_facebook?: string | null
           social_instagram?: string | null
