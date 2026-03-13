@@ -27,11 +27,13 @@ export function useCommunity(corridorId?: string | null) {
   const [loading, setLoading] = useState(true);
 
   const fetchQuestions = useCallback(async () => {
+    setLoading(true);
     let query = supabase
       .from('questions')
       .select('*, answers(*)')
       .order('created_at', { ascending: false });
 
+    // Only filter by corridor if explicitly set (not null/undefined = "all")
     if (corridorId) {
       query = query.eq('corridor_id', corridorId);
     }
