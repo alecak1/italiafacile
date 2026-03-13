@@ -40,6 +40,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const RequireOnboarding = ({ children }: { children: React.ReactNode }) => {
   const onboardingComplete = localStorage.getItem('onboarding_complete');
+  // Check both localStorage (fast) and will be overridden by DB check in profile hook
   if (!onboardingComplete) {
     return <Navigate to="/onboarding" replace />;
   }
