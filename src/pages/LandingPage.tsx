@@ -13,18 +13,12 @@ import {
   GraduationCap,
   ChevronRight,
   Star,
-  Globe,
 } from 'lucide-react';
 import heroImage from '@/assets/hero-landing.jpg';
 import iconDocuments from '@/assets/icon-documents.png';
 import iconGuidance from '@/assets/icon-guidance.png';
 import iconCommunity from '@/assets/icon-community.png';
-
-const LANGUAGES = [
-  { code: 'it', label: '🇮🇹' },
-  { code: 'en', label: '🇬🇧' },
-  { code: 'bg', label: '🇧🇬' },
-];
+import LanguageSelector from '@/components/LanguageSelector';
 
 const LandingPage = () => {
   const navigate = useNavigate();
