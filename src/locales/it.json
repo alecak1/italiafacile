@@ -194,7 +194,10 @@
     "noQuestions": "Nessuna domanda ancora",
     "beFirst": "Fai la prima domanda alla community!",
     "noAnswers": "Nessuna risposta ancora. Sii il primo!",
-    "moreAnswers": "+{{count}} altre risposte"
+    "moreAnswers": "+{{count}} altre risposte",
+    "allCommunities": "Tutte",
+    "communityOf": "Community {{country}}",
+    "yourCommunity": "La tua"
   },
   "profile": {
     "continueJourney": "Continua il percorso",
