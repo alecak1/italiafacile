@@ -115,7 +115,7 @@ const LandingPage = () => {
             onClick={() => navigate('/auth')}
             className="flex h-10 items-center gap-2 rounded-xl gradient-hero px-5 text-sm font-bold text-primary-foreground shadow-cta transition-all hover:opacity-90 active:scale-95"
           >
-            Inizia gratis
+            Accedi
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
