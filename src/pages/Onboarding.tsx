@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, MapPin, Briefcase, GraduationCap, Heart } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useCorridors } from '@/hooks/useCorridors';
-import { useJourney } from '@/hooks/useJourney';
 import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingData {
@@ -23,21 +23,15 @@ const STEPS = ['name', 'nationality', 'destination', 'reason', 'status', 'langua
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { updateProfile } = useProfile();
   const { getDefaultCorridor } = useCorridors();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState<OnboardingData>({
-    name: '',
-    nationality: 'Bulgaria',
-    destinationCountry: 'Italia',
-    destinationCity: '',
-    reasonForMoving: '',
-    alreadyInCountry: '',
-    hasTaxCode: '',
-    jobStatus: '',
-    languageLevel: '',
+    name: '', nationality: 'Bulgaria', destinationCountry: 'Italia', destinationCity: '',
+    reasonForMoving: '', alreadyInCountry: '', hasTaxCode: '', jobStatus: '', languageLevel: '',
   });
 
   const progress = ((step + 1) / STEPS.length) * 100;
@@ -55,74 +49,44 @@ const Onboarding = () => {
   };
 
   const handleNext = async () => {
-    if (step < STEPS.length - 1) {
-      setStep(step + 1);
-    } else {
-      setSaving(true);
-      const corridor = getDefaultCorridor();
-
-      // Save to database
-      await updateProfile({
-        name: data.name,
-        nationality: data.nationality,
-        destination_country: data.destinationCountry,
-        destination_city: data.destinationCity,
-        reason_for_moving: data.reasonForMoving,
-        already_in_country: data.alreadyInCountry === 'yes',
-        has_tax_code: data.hasTaxCode === 'yes',
-        job_status: data.jobStatus,
-        language_level: data.languageLevel,
-        onboarding_completed: true,
-        corridor_id: corridor?.id || null,
-      });
-
-      // Initialize journey progress
-      if (user && corridor) {
-        const { data: templates } = await supabase
-          .from('journey_step_templates')
-          .select('id, step_order')
-          .eq('corridor_id', corridor.id)
-          .eq('is_active', true)
-          .order('step_order', { ascending: true });
-
-        if (templates && templates.length > 0) {
-          const inserts = templates.map((t: any, i: number) => ({
-            user_id: user.id,
-            step_template_id: t.id,
-            status: i === 0 ? 'current' : 'locked',
-            checklist_state: [],
-          }));
-
-          await supabase.from('user_step_progress').insert(inserts);
-        }
+    if (step < STEPS.length - 1) { setStep(step + 1); return; }
+    setSaving(true);
+    const corridor = getDefaultCorridor();
+    await updateProfile({
+      name: data.name, nationality: data.nationality, destination_country: data.destinationCountry,
+      destination_city: data.destinationCity, reason_for_moving: data.reasonForMoving,
+      already_in_country: data.alreadyInCountry === 'yes', has_tax_code: data.hasTaxCode === 'yes',
+      job_status: data.jobStatus, language_level: data.languageLevel,
+      onboarding_completed: true, corridor_id: corridor?.id || null,
+    });
+    if (user && corridor) {
+      const { data: templates } = await supabase.from('journey_step_templates').select('id, step_order')
+        .eq('corridor_id', corridor.id).eq('is_active', true).order('step_order', { ascending: true });
+      if (templates && templates.length > 0) {
+        const inserts = templates.map((tpl: any, i: number) => ({
+          user_id: user.id, step_template_id: tpl.id,
+          status: i === 0 ? 'current' : 'locked', checklist_state: [],
+        }));
+        await supabase.from('user_step_progress').insert(inserts);
       }
-
-      // Keep localStorage as fallback for display name
-      localStorage.setItem('onboarding_complete', 'true');
-      localStorage.setItem('user_name', data.name);
-
-      setSaving(false);
-      navigate('/dashboard');
     }
+    localStorage.setItem('onboarding_complete', 'true');
+    localStorage.setItem('user_name', data.name);
+    setSaving(false);
+    navigate('/dashboard');
   };
 
   const OptionButton = ({ value, selected, onClick, children, icon }: {
     value: string; selected: boolean; onClick: () => void; children: React.ReactNode; icon?: React.ReactNode;
   }) => (
-    <button
-      onClick={onClick}
+    <button onClick={onClick}
       className={`flex w-full items-center gap-3.5 rounded-2xl border-2 p-4 text-left transition-all duration-200 ${
-        selected
-          ? 'border-primary bg-primary/5 shadow-card-hover'
-          : 'border-border bg-card hover:border-primary/30 hover:shadow-card'
-      }`}
-    >
+        selected ? 'border-primary bg-primary/5 shadow-card-hover' : 'border-border bg-card hover:border-primary/30 hover:shadow-card'
+      }`}>
       {icon && (
         <div className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all ${
           selected ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-        }`}>
-          {icon}
-        </div>
+        }`}>{icon}</div>
       )}
       <span className={`text-sm font-medium ${selected ? 'text-foreground' : 'text-muted-foreground'}`}>{children}</span>
     </button>
@@ -134,102 +98,90 @@ const Onboarding = () => {
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Come ti chiami?</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Useremo il tuo nome per personalizzare l'esperienza.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.nameTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.nameSubtitle')}</p>
             </div>
-            <input
-              type="text"
-              value={data.name}
-              onChange={(e) => setData({ ...data, name: e.target.value })}
-              placeholder="Il tuo nome"
+            <input type="text" value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })}
+              placeholder={t('onboarding.namePlaceholder')}
               className="w-full rounded-2xl border-2 border-border bg-card px-5 py-4 text-base font-medium text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all"
-              autoFocus
-            />
+              autoFocus />
           </div>
         );
-
       case 'nationality':
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Da dove vieni?</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Questo ci aiuta a personalizzare le informazioni per te.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.nationalityTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.nationalitySubtitle')}</p>
             </div>
             <div className="space-y-3">
               {['Bulgaria', 'Romania', 'Altro'].map((n) => (
                 <OptionButton key={n} value={n} selected={data.nationality === n} onClick={() => setData({ ...data, nationality: n })}>
-                  {n === 'Bulgaria' ? '🇧🇬 Bulgaria' : n === 'Romania' ? '🇷🇴 Romania' : '🌍 Altro'}
+                  {n === 'Bulgaria' ? '🇧🇬 Bulgaria' : n === 'Romania' ? '🇷🇴 Romania' : `🌍 ${t('onboarding.other')}`}
                 </OptionButton>
               ))}
             </div>
           </div>
         );
-
       case 'destination':
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Dove ti trasferisci?</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Indica la città di destinazione.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.destinationTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.destinationSubtitle')}</p>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-3 rounded-2xl border-2 border-border bg-card px-5 py-3.5 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={data.destinationCity}
-                  onChange={(e) => setData({ ...data, destinationCity: e.target.value })}
-                  placeholder="Es. Milano, Roma, Torino..."
-                  className="flex-1 bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none"
-                />
+                <input type="text" value={data.destinationCity} onChange={(e) => setData({ ...data, destinationCity: e.target.value })}
+                  placeholder={t('onboarding.destinationPlaceholder')}
+                  className="flex-1 bg-transparent text-sm font-medium text-foreground placeholder:text-muted-foreground focus:outline-none" />
               </div>
-              <p className="text-sm font-semibold text-foreground">Sei già in Italia?</p>
+              <p className="text-sm font-semibold text-foreground">{t('onboarding.alreadyInCountry')}</p>
               <div className="grid grid-cols-2 gap-3">
-                <OptionButton value="yes" selected={data.alreadyInCountry === 'yes'} onClick={() => setData({ ...data, alreadyInCountry: 'yes' })}>Sì</OptionButton>
-                <OptionButton value="no" selected={data.alreadyInCountry === 'no'} onClick={() => setData({ ...data, alreadyInCountry: 'no' })}>No</OptionButton>
+                <OptionButton value="yes" selected={data.alreadyInCountry === 'yes'} onClick={() => setData({ ...data, alreadyInCountry: 'yes' })}>{t('onboarding.yes')}</OptionButton>
+                <OptionButton value="no" selected={data.alreadyInCountry === 'no'} onClick={() => setData({ ...data, alreadyInCountry: 'no' })}>{t('onboarding.no')}</OptionButton>
               </div>
             </div>
           </div>
         );
-
       case 'reason':
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Perché ti trasferisci?</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Questo ci aiuta a creare il percorso giusto per te.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.reasonTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.reasonSubtitle')}</p>
             </div>
             <div className="space-y-3">
-              <OptionButton value="work" selected={data.reasonForMoving === 'work'} onClick={() => setData({ ...data, reasonForMoving: 'work' })} icon={<Briefcase className="h-5 w-5" />}>Lavoro</OptionButton>
-              <OptionButton value="study" selected={data.reasonForMoving === 'study'} onClick={() => setData({ ...data, reasonForMoving: 'study' })} icon={<GraduationCap className="h-5 w-5" />}>Studio</OptionButton>
-              <OptionButton value="family" selected={data.reasonForMoving === 'family'} onClick={() => setData({ ...data, reasonForMoving: 'family' })} icon={<Heart className="h-5 w-5" />}>Famiglia</OptionButton>
+              <OptionButton value="work" selected={data.reasonForMoving === 'work'} onClick={() => setData({ ...data, reasonForMoving: 'work' })} icon={<Briefcase className="h-5 w-5" />}>{t('onboarding.work')}</OptionButton>
+              <OptionButton value="study" selected={data.reasonForMoving === 'study'} onClick={() => setData({ ...data, reasonForMoving: 'study' })} icon={<GraduationCap className="h-5 w-5" />}>{t('onboarding.study')}</OptionButton>
+              <OptionButton value="family" selected={data.reasonForMoving === 'family'} onClick={() => setData({ ...data, reasonForMoving: 'family' })} icon={<Heart className="h-5 w-5" />}>{t('onboarding.family')}</OptionButton>
             </div>
           </div>
         );
-
       case 'status':
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">La tua situazione attuale</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Aiutaci a capire da dove parti.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.statusTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.statusSubtitle')}</p>
             </div>
             <div className="space-y-5">
               <div>
-                <p className="mb-3 text-sm font-semibold text-foreground">Hai già il codice fiscale italiano?</p>
+                <p className="mb-3 text-sm font-semibold text-foreground">{t('onboarding.hasTaxCode')}</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <OptionButton value="yes" selected={data.hasTaxCode === 'yes'} onClick={() => setData({ ...data, hasTaxCode: 'yes' })}>Sì</OptionButton>
-                  <OptionButton value="no" selected={data.hasTaxCode === 'no'} onClick={() => setData({ ...data, hasTaxCode: 'no' })}>No</OptionButton>
+                  <OptionButton value="yes" selected={data.hasTaxCode === 'yes'} onClick={() => setData({ ...data, hasTaxCode: 'yes' })}>{t('onboarding.yes')}</OptionButton>
+                  <OptionButton value="no" selected={data.hasTaxCode === 'no'} onClick={() => setData({ ...data, hasTaxCode: 'no' })}>{t('onboarding.no')}</OptionButton>
                 </div>
               </div>
               <div>
-                <p className="mb-3 text-sm font-semibold text-foreground">Situazione lavorativa</p>
+                <p className="mb-3 text-sm font-semibold text-foreground">{t('onboarding.jobStatus')}</p>
                 <div className="space-y-3">
                   {[
-                    { value: 'employed', label: 'Ho un lavoro' },
-                    { value: 'unemployed', label: 'Cerco lavoro' },
-                    { value: 'student', label: 'Studente' },
-                    { value: 'freelance', label: 'Libero professionista' },
+                    { value: 'employed', label: t('onboarding.employed') },
+                    { value: 'unemployed', label: t('onboarding.unemployed') },
+                    { value: 'student', label: t('onboarding.student') },
+                    { value: 'freelance', label: t('onboarding.freelance') },
                   ].map((opt) => (
                     <OptionButton key={opt.value} value={opt.value} selected={data.jobStatus === opt.value} onClick={() => setData({ ...data, jobStatus: opt.value })}>{opt.label}</OptionButton>
                   ))}
@@ -238,20 +190,19 @@ const Onboarding = () => {
             </div>
           </div>
         );
-
       case 'language':
         return (
           <div className="animate-fade-in space-y-6">
             <div>
-              <h1 className="text-2xl font-black tracking-tight text-foreground">Parli italiano?</h1>
-              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Il tuo livello ci aiuta a darti consigli migliori.</p>
+              <h1 className="text-2xl font-black tracking-tight text-foreground">{t('onboarding.languageTitle')}</h1>
+              <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{t('onboarding.languageSubtitle')}</p>
             </div>
             <div className="space-y-3">
               {[
-                { value: 'none', label: 'Non parlo italiano', emoji: '🔴' },
-                { value: 'beginner', label: 'Principiante', emoji: '🟡' },
-                { value: 'intermediate', label: 'Intermedio', emoji: '🟢' },
-                { value: 'advanced', label: 'Avanzato', emoji: '💚' },
+                { value: 'none', label: t('onboarding.langNone'), emoji: '🔴' },
+                { value: 'beginner', label: t('onboarding.langBeginner'), emoji: '🟡' },
+                { value: 'intermediate', label: t('onboarding.langIntermediate'), emoji: '🟢' },
+                { value: 'advanced', label: t('onboarding.langAdvanced'), emoji: '💚' },
               ].map((opt) => (
                 <OptionButton key={opt.value} value={opt.value} selected={data.languageLevel === opt.value} onClick={() => setData({ ...data, languageLevel: opt.value })}>{opt.emoji} {opt.label}</OptionButton>
               ))}
@@ -277,21 +228,16 @@ const Onboarding = () => {
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-8">
-        {renderStep()}
-      </div>
+      <div className="flex-1 px-6 py-8">{renderStep()}</div>
 
       <div className="sticky bottom-0 glass-strong border-t border-border/30 px-6 pb-8 pt-5">
-        <button
-          onClick={handleNext}
-          disabled={!canContinue() || saving}
-          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
-        >
+        <button onClick={handleNext} disabled={!canContinue() || saving}
+          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none">
           {saving ? (
             <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
           ) : (
             <>
-              {step === STEPS.length - 1 ? 'Inizia il tuo percorso' : 'Continua'}
+              {step === STEPS.length - 1 ? t('onboarding.startJourney') : t('onboarding.continue')}
               <ArrowRight className="h-5 w-5" />
             </>
           )}
