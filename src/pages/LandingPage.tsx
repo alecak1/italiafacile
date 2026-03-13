@@ -112,7 +112,7 @@ const LandingPage = () => {
             <span className="text-lg font-extrabold text-foreground tracking-tight">Trasferisciti</span>
           </div>
           <button
-            onClick={() => navigate('/onboarding')}
+            onClick={() => navigate('/auth')}
             className="flex h-10 items-center gap-2 rounded-xl gradient-hero px-5 text-sm font-bold text-primary-foreground shadow-cta transition-all hover:opacity-90 active:scale-95"
           >
             Inizia gratis
