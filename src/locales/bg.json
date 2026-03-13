@@ -194,7 +194,10 @@
     "noQuestions": "Все още няма въпроси",
     "beFirst": "Задайте първия въпрос на общността!",
     "noAnswers": "Все още няма отговори. Бъдете първият!",
-    "moreAnswers": "+{{count}} още отговори"
+    "moreAnswers": "+{{count}} още отговори",
+    "allCommunities": "Всички",
+    "communityOf": "Общност {{country}}",
+    "yourCommunity": "Вашата"
   },
   "profile": {
     "continueJourney": "Продължете маршрута",
