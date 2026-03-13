@@ -1,20 +1,22 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Clock, ArrowRight, BookOpen } from 'lucide-react';
-import { mockGuides } from '@/data/mockData';
+import { useGuides } from '@/hooks/useGuides';
 import { useAuth } from '@/contexts/AuthContext';
 
 const GuideDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const guide = mockGuides.find((g) => g.id === id);
-  const currentIndex = mockGuides.findIndex((g) => g.id === id);
-  const nextGuide = currentIndex >= 0 && currentIndex < mockGuides.length - 1 ? mockGuides[currentIndex + 1] : null;
+  const { guides } = useGuides();
+
+  const guide = guides.find((g) => g.id === id);
+  const currentIndex = guides.findIndex((g) => g.id === id);
+  const nextGuide = currentIndex >= 0 && currentIndex < guides.length - 1 ? guides[currentIndex + 1] : null;
 
   if (!guide) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-muted-foreground">Guida non trovata.</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
       </div>
     );
   }
@@ -27,7 +29,7 @@ const GuideDetail = () => {
         </button>
         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
-          {guide.readingTime}
+          {guide.reading_time}
         </div>
       </div>
 
@@ -54,7 +56,6 @@ const GuideDetail = () => {
           ))}
         </div>
 
-        {/* Next actions */}
         <div className="mt-12 space-y-3 pb-4">
           {nextGuide && (
             <button
