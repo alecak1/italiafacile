@@ -17,6 +17,10 @@ export interface Profile {
   onboarding_completed: boolean | null;
   corridor_id: string | null;
   avatar_url: string | null;
+  bio: string | null;
+  social_linkedin: string | null;
+  social_instagram: string | null;
+  social_facebook: string | null;
 }
 
 export function useProfile() {

@@ -168,6 +168,7 @@ export type Database = {
         Row: {
           already_in_country: boolean | null
           avatar_url: string | null
+          bio: string | null
           corridor_id: string | null
           created_at: string
           destination_city: string | null
@@ -180,12 +181,16 @@ export type Database = {
           nationality: string | null
           onboarding_completed: boolean | null
           reason_for_moving: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_linkedin: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           already_in_country?: boolean | null
           avatar_url?: string | null
+          bio?: string | null
           corridor_id?: string | null
           created_at?: string
           destination_city?: string | null
@@ -198,12 +203,16 @@ export type Database = {
           nationality?: string | null
           onboarding_completed?: boolean | null
           reason_for_moving?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           already_in_country?: boolean | null
           avatar_url?: string | null
+          bio?: string | null
           corridor_id?: string | null
           created_at?: string
           destination_city?: string | null
@@ -216,6 +225,9 @@ export type Database = {
           nationality?: string | null
           onboarding_completed?: boolean | null
           reason_for_moving?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_linkedin?: string | null
           updated_at?: string
           user_id?: string
         }
