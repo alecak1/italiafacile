@@ -7,12 +7,7 @@ import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-
-const LANGUAGES = [
-  { code: 'it', label: '🇮🇹 Italiano' },
-  { code: 'en', label: '🇬🇧 English' },
-  { code: 'bg', label: '🇧🇬 Български' },
-];
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Profile = () => {
   const navigate = useNavigate();
