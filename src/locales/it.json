@@ -69,7 +69,10 @@
     "finalCtaDesc": "In 2 minuti creiamo il tuo percorso personalizzato. È gratuito.",
     "finalCtaButton": "Inizia adesso — è gratis",
     "noCreditCard": "Nessuna carta di credito richiesta",
-    "footer": "© 2026 Trasferisciti. Tutti i diritti riservati."
+    "footer": "© 2026 Trasferisciti. Tutti i diritti riservati.",
+    "testimonial1": "Senza questa guida sarei ancora in fila all'ufficio sbagliato. Mi ha risparmiato settimane di stress.",
+    "testimonial2": "Finalmente qualcuno che spiega la burocrazia italiana in modo semplice. Ogni passo era chiaro.",
+    "testimonial3": "La community mi ha aiutato tantissimo. Ho trovato risposte a domande che non sapevo nemmeno di avere."
   },
   "auth": {
     "welcome": "Bentornato!",
