@@ -1,11 +1,15 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock } from 'lucide-react';
+import { ArrowLeft, Clock, ArrowRight, BookOpen } from 'lucide-react';
 import { mockGuides } from '@/data/mockData';
+import { useAuth } from '@/contexts/AuthContext';
 
 const GuideDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const guide = mockGuides.find((g) => g.id === id);
+  const currentIndex = mockGuides.findIndex((g) => g.id === id);
+  const nextGuide = currentIndex >= 0 && currentIndex < mockGuides.length - 1 ? mockGuides[currentIndex + 1] : null;
 
   if (!guide) {
     return (
@@ -48,6 +52,35 @@ const GuideDetail = () => {
               )}
             </div>
           ))}
+        </div>
+
+        {/* Next actions */}
+        <div className="mt-10 space-y-3">
+          {nextGuide && (
+            <button
+              onClick={() => navigate(`/guide/${nextGuide.id}`)}
+              className="flex w-full items-center gap-3 rounded-2xl bg-card p-4 shadow-card transition-all hover:shadow-card-hover active:scale-[0.98]"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/10">
+                <BookOpen className="h-5 w-5 text-secondary" />
+              </div>
+              <div className="flex-1 text-left">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Prossima guida</div>
+                <div className="text-sm font-bold text-foreground">{nextGuide.title}</div>
+              </div>
+              <ArrowRight className="h-5 w-5 text-muted-foreground" />
+            </button>
+          )}
+
+          {!user && (
+            <button
+              onClick={() => navigate('/auth')}
+              className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98]"
+            >
+              Inizia il tuo percorso personalizzato
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          )}
         </div>
       </div>
     </div>

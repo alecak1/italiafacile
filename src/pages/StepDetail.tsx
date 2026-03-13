@@ -120,13 +120,16 @@ const StepDetail = () => {
           </div>
         </div>
 
-        {/* Complete button */}
+      </div>
+
+      {/* Sticky bottom CTA */}
+      <div className="sticky bottom-0 z-20 border-t border-border bg-card/95 backdrop-blur-md px-5 py-4 safe-bottom">
         <button
           disabled={!allChecked}
-          className="mb-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-all disabled:opacity-40"
+          className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
-          <Check className="h-4 w-4" />
-          Segna come completato
+          <Check className="h-5 w-5" />
+          {allChecked ? 'Segna come completato' : `Completa la checklist (${checklist.filter(i => i.checked).length}/${checklist.length})`}
         </button>
       </div>
     </div>

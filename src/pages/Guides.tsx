@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Search, BookOpen } from 'lucide-react';
+import { Search, BookOpen, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import GuideCard from '@/components/GuideCard';
 import { mockGuides } from '@/data/mockData';
 import { GUIDE_CATEGORIES, GuideCategory } from '@/types';
 
 const Guides = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState<GuideCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -83,6 +87,22 @@ const Guides = () => {
             </div>
             <p className="text-sm font-medium text-foreground">Nessuna guida trovata</p>
             <p className="mt-1 text-xs text-muted-foreground">Prova con un'altra ricerca.</p>
+          </div>
+        )}
+
+        {/* CTA for non-logged-in users */}
+        {!user && (
+          <div className="mt-6 animate-fade-in">
+            <button
+              onClick={() => navigate('/auth')}
+              className="flex w-full items-center gap-3 rounded-2xl gradient-hero p-5 text-left text-primary-foreground shadow-cta transition-all active:scale-[0.98]"
+            >
+              <div className="flex-1">
+                <div className="text-sm font-bold">Vuoi un percorso personalizzato?</div>
+                <div className="mt-0.5 text-xs opacity-80">Registrati gratis e ricevi il piano su misura per te.</div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0" />
+            </button>
           </div>
         )}
       </div>
