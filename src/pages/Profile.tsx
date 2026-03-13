@@ -1,25 +1,58 @@
 import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { mockJourneySteps } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
+import { useJourney } from '@/hooks/useJourney';
+
+const REASON_LABELS: Record<string, string> = {
+  work: '💼 Lavoro',
+  study: '📚 Studio',
+  family: '❤️ Famiglia',
+};
+
+const LANGUAGE_LABELS: Record<string, string> = {
+  none: '🔴 Non parlo italiano',
+  beginner: '🟡 Principiante',
+  intermediate: '🟢 Intermedio',
+  advanced: '💚 Avanzato',
+};
+
+const JOB_LABELS: Record<string, string> = {
+  employed: 'Impiegato',
+  unemployed: 'In cerca di lavoro',
+  student: 'Studente',
+  freelance: 'Libero professionista',
+};
 
 const Profile = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const userName = localStorage.getItem('user_name') || user?.user_metadata?.full_name || 'Utente';
-  const completedSteps = mockJourneySteps.filter((s) => s.status === 'completed').length;
-  const remainingSteps = mockJourneySteps.filter((s) => s.status !== 'completed').length;
-  const totalSteps = mockJourneySteps.length;
+  const { profile } = useProfile();
+  const { steps } = useJourney(profile?.corridor_id);
+
+  const userName = profile?.name || user?.user_metadata?.full_name || 'Utente';
+  const completedSteps = steps.filter((s) => s.status === 'completed').length;
+  const remainingSteps = steps.filter((s) => s.status !== 'completed').length;
+  const totalSteps = steps.length;
   const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
   const handleSignOut = async () => {
+    localStorage.removeItem('onboarding_complete');
+    localStorage.removeItem('user_name');
     await signOut();
     navigate('/');
   };
 
+  const infoItems = [
+    { label: 'Nazionalità', value: profile?.nationality || '—' },
+    { label: 'Destinazione', value: profile?.destination_city ? `${profile.destination_city}, ${profile.destination_country}` : '—' },
+    { label: 'Motivo', value: REASON_LABELS[profile?.reason_for_moving || ''] || '—' },
+    { label: 'Livello italiano', value: LANGUAGE_LABELS[profile?.language_level || ''] || '—' },
+    { label: 'Stato lavorativo', value: JOB_LABELS[profile?.job_status || ''] || '—' },
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
       <div className="relative overflow-hidden bg-card px-6 pb-7 pt-12">
         <div className="absolute inset-0 gradient-hero opacity-[0.04]" />
         <div className="relative flex items-center gap-4">
@@ -30,10 +63,12 @@ const Profile = () => {
           <div>
             <h1 className="text-xl font-black text-foreground">{userName}</h1>
             <p className="text-xs text-muted-foreground">{user?.email}</p>
-            <div className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
-              <MapPin className="h-3.5 w-3.5" />
-              Milano, Italia
-            </div>
+            {profile?.destination_city && (
+              <div className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5" />
+                {profile.destination_city}, {profile.destination_country}
+              </div>
+            )}
             <div className="mt-2 flex items-center gap-2.5">
               <div className="h-2 w-24 overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full gradient-hero" style={{ width: `${progress}%` }} />
@@ -44,7 +79,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Continue journey CTA */}
       {remainingSteps > 0 && (
         <div className="px-6 pt-5">
           <button
@@ -63,7 +97,6 @@ const Profile = () => {
         </div>
       )}
 
-      {/* Stats */}
       <div className="px-6 py-5">
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-card text-center">
@@ -83,15 +116,9 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Info */}
       <div className="px-6 space-y-2">
         <h2 className="mb-3 text-xs font-bold text-muted-foreground uppercase tracking-widest">Informazioni</h2>
-        {[
-          { label: 'Nazionalità', value: '🇧🇬 Bulgaria' },
-          { label: 'Motivo', value: '💼 Lavoro' },
-          { label: 'Livello italiano', value: '🟡 Principiante' },
-          { label: 'Stato lavorativo', value: 'Impiegato' },
-        ].map((item) => (
+        {infoItems.map((item) => (
           <div key={item.label} className="flex items-center justify-between rounded-2xl border border-border/60 bg-card p-4 shadow-card">
             <span className="text-sm text-muted-foreground">{item.label}</span>
             <span className="text-sm font-semibold text-foreground">{item.value}</span>
@@ -99,7 +126,6 @@ const Profile = () => {
         ))}
       </div>
 
-      {/* Actions */}
       <div className="mt-6 px-6 space-y-2">
         <button
           onClick={() => navigate('/journey')}

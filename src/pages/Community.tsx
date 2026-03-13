@@ -1,11 +1,46 @@
 import { useState } from 'react';
 import { Plus, Users, MessageCircle } from 'lucide-react';
 import QuestionCard from '@/components/QuestionCard';
-import { mockQuestions } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
+import { useCommunity } from '@/hooks/useCommunity';
+import { toast } from 'sonner';
 
 const Community = () => {
+  const { profile } = useProfile();
+  const { questions, loading, addQuestion } = useCommunity(profile?.corridor_id);
   const [showForm, setShowForm] = useState(false);
   const [newQuestion, setNewQuestion] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!newQuestion.trim()) return;
+    setSubmitting(true);
+    const { error } = await addQuestion(newQuestion.trim());
+    if (error) {
+      toast.error('Errore nel pubblicare la domanda.');
+    } else {
+      setNewQuestion('');
+      setShowForm(false);
+      toast.success('Domanda pubblicata!');
+    }
+    setSubmitting(false);
+  };
+
+  // Map DB questions to QuestionCard format
+  const mappedQuestions = questions.map((q) => ({
+    id: q.id,
+    authorName: q.author_name || 'Utente',
+    text: q.text,
+    category: q.category,
+    createdAt: new Date(q.created_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }),
+    answers: q.answers.map((a) => ({
+      id: a.id,
+      authorName: a.author_name || 'Utente',
+      text: a.text,
+      upvotes: a.upvotes,
+      createdAt: new Date(a.created_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }),
+    })),
+  }));
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -21,7 +56,6 @@ const Community = () => {
         </div>
       </div>
 
-      {/* Ask button */}
       <div className="px-6 py-5">
         {!showForm ? (
           <button
@@ -52,20 +86,24 @@ const Community = () => {
                 Annulla
               </button>
               <button
-                disabled={!newQuestion.trim()}
+                onClick={handleSubmit}
+                disabled={!newQuestion.trim() || submitting}
                 className="flex-1 rounded-xl gradient-hero py-3.5 text-sm font-bold text-primary-foreground shadow-cta disabled:opacity-40 disabled:shadow-none transition-all"
               >
-                Pubblica
+                {submitting ? 'Pubblicazione...' : 'Pubblica'}
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* Questions */}
       <div className="space-y-3 px-6">
-        {mockQuestions.length > 0 ? (
-          mockQuestions.map((question, i) => (
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          </div>
+        ) : mappedQuestions.length > 0 ? (
+          mappedQuestions.map((question, i) => (
             <div key={question.id} className="animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
               <QuestionCard question={question} />
             </div>

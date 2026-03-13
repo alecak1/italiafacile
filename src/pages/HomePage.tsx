@@ -1,14 +1,19 @@
-import { FileText, Home as HomeIcon, HelpCircle, BookOpen, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
+import { FileText, Home as HomeIcon, HelpCircle, ChevronRight, ArrowRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProgressCard from '@/components/ProgressCard';
 import GuideCard from '@/components/GuideCard';
-import { mockJourneySteps, mockGuides } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
+import { useJourney } from '@/hooks/useJourney';
+import { useGuides } from '@/hooks/useGuides';
 import heroIllustration from '@/assets/hero-illustration.png';
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('user_name') || 'Amico';
-  const currentStep = mockJourneySteps.find((s) => s.status === 'current');
+  const { profile } = useProfile();
+  const { steps } = useJourney(profile?.corridor_id);
+  const { guides } = useGuides(profile?.corridor_id);
+  const userName = profile?.name || localStorage.getItem('user_name') || 'Amico';
+  const currentStep = steps.find((s) => s.status === 'current');
 
   const quickActions = [
     { label: 'Documenti', desc: 'Guida completa', icon: FileText, path: '/guides', color: 'bg-secondary/10 text-secondary' },
@@ -16,13 +21,38 @@ const HomePage = () => {
     { label: 'Domande', desc: 'Community', icon: HelpCircle, path: '/community', color: 'bg-primary/10 text-primary' },
   ];
 
-  const recentGuides = mockGuides.slice(0, 3);
+  const recentGuides = guides.slice(0, 3);
+
+  // Map DB guides to the format GuideCard expects
+  const mapGuide = (g: typeof guides[0]) => ({
+    id: g.id,
+    title: g.title,
+    category: g.category as any,
+    readingTime: g.reading_time,
+    summary: g.summary,
+    sections: g.sections,
+  });
+
+  // Map steps to the format ProgressCard expects
+  const mapSteps = steps.map((s) => ({
+    id: s.id,
+    order: s.step_order,
+    title: s.title,
+    explanation: s.explanation,
+    whyItMatters: s.why_it_matters,
+    documents: s.documents,
+    whereToGo: s.where_to_go,
+    estimatedTime: s.estimated_time,
+    cost: s.cost,
+    checklist: s.checklist,
+    status: s.status,
+    category: s.category,
+  }));
 
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero section */}
       <div className="relative overflow-hidden bg-card px-6 pb-7 pt-12">
-        {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.02]" style={{
           backgroundImage: 'radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)',
           backgroundSize: '28px 28px'
@@ -33,21 +63,16 @@ const HomePage = () => {
             <p className="text-sm font-medium text-muted-foreground">Ciao 👋</p>
             <h1 className="mt-1.5 text-3xl font-black tracking-tight text-foreground">{userName}</h1>
             <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground max-w-[260px]">
-              Il tuo assistente per trasferirti in Italia. Ogni passo, spiegato semplice.
+              Il tuo assistente per trasferirti in {profile?.destination_country || 'Italia'}. Ogni passo, spiegato semplice.
             </p>
           </div>
-          <img
-            src={heroIllustration}
-            alt="Illustrazione viaggio"
-            className="h-24 w-24 object-contain opacity-85 animate-fade-in"
-          />
+          <img src={heroIllustration} alt="Illustrazione viaggio" className="h-24 w-24 object-contain opacity-85 animate-fade-in" />
         </div>
 
-        {/* Next action banner */}
         {currentStep && (
           <button
             onClick={() => navigate(`/step/${currentStep.id}`)}
-            className="mt-6 flex w-full items-center gap-3.5 rounded-2xl gradient-hero p-4.5 text-left text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in"
+            className="mt-6 flex w-full items-center gap-3.5 rounded-2xl gradient-hero text-left text-primary-foreground shadow-cta transition-all active:scale-[0.98] animate-fade-in"
             style={{ animationDelay: '200ms', padding: '18px' }}
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/20">
@@ -65,8 +90,7 @@ const HomePage = () => {
       </div>
 
       <div className="space-y-8 px-6 py-7">
-        {/* Progress card */}
-        <ProgressCard steps={mockJourneySteps} userName={userName} />
+        {mapSteps.length > 0 && <ProgressCard steps={mapSteps} userName={userName} />}
 
         {/* Quick actions */}
         <div>
@@ -95,28 +119,30 @@ const HomePage = () => {
         </div>
 
         {/* Recent guides */}
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-foreground">Guide utili</h2>
-            <button onClick={() => navigate('/guides')} className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
-              Vedi tutte <ChevronRight className="h-3.5 w-3.5" />
-            </button>
+        {recentGuides.length > 0 && (
+          <div>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground">Guide utili</h2>
+              <button onClick={() => navigate('/guides')} className="flex items-center gap-1 text-xs font-semibold text-secondary hover:underline">
+                Vedi tutte <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {recentGuides.map((guide, i) => (
+                <div key={guide.id} className="animate-fade-in" style={{ animationDelay: `${(i + 1) * 80}ms` }}>
+                  <GuideCard guide={mapGuide(guide)} />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="space-y-3">
-            {recentGuides.map((guide, i) => (
-              <div key={guide.id} className="animate-fade-in" style={{ animationDelay: `${(i + 1) * 80}ms` }}>
-                <GuideCard guide={guide} />
-              </div>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Community teaser */}
         <button
           onClick={() => navigate('/community')}
           className="group flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-border bg-card/50 p-6 text-left transition-all duration-200 hover:border-secondary/40 hover:bg-card hover:shadow-card-hover"
         >
-          <div className="flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-secondary/10 transition-transform group-hover:scale-110" style={{ width: '52px', height: '52px' }}>
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-secondary/10 transition-transform group-hover:scale-110" style={{ width: '52px', height: '52px' }}>
             <HelpCircle className="h-6 w-6 text-secondary" />
           </div>
           <div className="flex-1">

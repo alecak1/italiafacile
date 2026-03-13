@@ -1,16 +1,42 @@
-import { useState } from 'react';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import JourneyTimeline from '@/components/JourneyTimeline';
-import { mockJourneySteps } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
+import { useJourney } from '@/hooks/useJourney';
 import { useNavigate } from 'react-router-dom';
 
 const Journey = () => {
-  const [steps] = useState(mockJourneySteps);
   const navigate = useNavigate();
+  const { profile } = useProfile();
+  const { steps, loading } = useJourney(profile?.corridor_id);
+
   const completedCount = steps.filter((s) => s.status === 'completed').length;
   const totalCount = steps.length;
   const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
   const currentStep = steps.find((s) => s.status === 'current');
+
+  // Map steps to the format JourneyTimeline expects
+  const mapSteps = steps.map((s) => ({
+    id: s.id,
+    order: s.step_order,
+    title: s.title,
+    explanation: s.explanation,
+    whyItMatters: s.why_it_matters,
+    documents: s.documents,
+    whereToGo: s.where_to_go,
+    estimatedTime: s.estimated_time,
+    cost: s.cost,
+    checklist: s.checklist,
+    status: s.status,
+    category: s.category,
+  }));
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -20,19 +46,14 @@ const Journey = () => {
           {completedCount} di {totalCount} passi completati
         </p>
 
-        {/* Progress bar */}
         <div className="mt-5 flex items-center gap-3">
           <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted">
-            <div
-              className="h-full rounded-full gradient-hero transition-all duration-1000"
-              style={{ width: `${Math.max(progress, 3)}%` }}
-            />
+            <div className="h-full rounded-full gradient-hero transition-all duration-1000" style={{ width: `${Math.max(progress, 3)}%` }} />
           </div>
           <span className="text-sm font-black text-primary">{Math.round(progress)}%</span>
         </div>
       </div>
 
-      {/* Current step CTA */}
       {currentStep && (
         <div className="px-6 py-5">
           <button
@@ -55,7 +76,7 @@ const Journey = () => {
 
       <div className="px-6 pb-4">
         <h2 className="mb-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">Tutti i passi</h2>
-        <JourneyTimeline steps={steps} />
+        <JourneyTimeline steps={mapSteps} />
       </div>
     </div>
   );

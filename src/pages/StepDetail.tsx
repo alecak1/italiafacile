@@ -1,44 +1,49 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Clock, Euro, FileText, Check, ExternalLink } from 'lucide-react';
-import { mockJourneySteps } from '@/data/mockData';
-import { useState } from 'react';
+import { useProfile } from '@/hooks/useProfile';
+import { useJourney } from '@/hooks/useJourney';
 
 const StepDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const step = mockJourneySteps.find((s) => s.id === id);
+  const { profile } = useProfile();
+  const { steps, updateChecklist, completeStep } = useJourney(profile?.corridor_id);
 
-  const [checklist, setChecklist] = useState(step?.checklist || []);
+  const step = steps.find((s) => s.id === id);
+  const stepIndex = steps.findIndex((s) => s.id === id);
 
   if (!step) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-muted-foreground">Passo non trovato.</p>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
       </div>
     );
   }
 
-  const toggleItem = (itemId: string) => {
-    setChecklist((prev) =>
-      prev.map((item) => (item.id === itemId ? { ...item, checked: !item.checked } : item))
-    );
+  const toggleItem = (checklistIndex: number) => {
+    updateChecklist(step.id, checklistIndex);
   };
 
-  const allChecked = checklist.every((item) => item.checked);
-  const checkedCount = checklist.filter((item) => item.checked).length;
+  const allChecked = step.checklist.every((item) => item.checked);
+  const checkedCount = step.checklist.filter((item) => item.checked).length;
+
+  const handleComplete = async () => {
+    if (allChecked) {
+      await completeStep(step.id);
+      navigate('/journey');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* Header */}
       <div className="sticky top-0 z-10 glass-strong border-b border-border/30 flex items-center gap-3 px-5 py-4">
         <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors">
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
-        <span className="text-xs font-semibold text-muted-foreground">Passo {step.order} di {mockJourneySteps.length}</span>
+        <span className="text-xs font-semibold text-muted-foreground">Passo {step.step_order} di {steps.length}</span>
       </div>
 
       <div className="px-6">
-        {/* Title */}
         <div className="animate-fade-in mb-7 pt-2">
           <div className="mb-3 inline-flex items-center rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
             {step.status === 'current' ? '📍 Passo attuale' : step.status === 'completed' ? '✅ Completato' : '🔒 Bloccato'}
@@ -47,18 +52,16 @@ const StepDetail = () => {
           <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{step.explanation}</p>
         </div>
 
-        {/* Why it matters */}
         <div className="animate-slide-up mb-6 rounded-2xl border border-secondary/20 bg-secondary/5 p-5">
           <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-secondary">💡 Perché è importante</h3>
-          <p className="text-sm leading-relaxed text-foreground">{step.whyItMatters}</p>
+          <p className="text-sm leading-relaxed text-foreground">{step.why_it_matters}</p>
         </div>
 
-        {/* Info cards */}
         <div className="mb-6 grid grid-cols-3 gap-3 animate-slide-up" style={{ animationDelay: '100ms' }}>
           <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-card text-center">
             <Clock className="mx-auto mb-1.5 h-4 w-4 text-muted-foreground" />
             <p className="text-[10px] font-medium text-muted-foreground">Tempo</p>
-            <p className="mt-0.5 text-xs font-bold text-foreground">{step.estimatedTime}</p>
+            <p className="mt-0.5 text-xs font-bold text-foreground">{step.estimated_time}</p>
           </div>
           <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-card text-center">
             <Euro className="mx-auto mb-1.5 h-4 w-4 text-muted-foreground" />
@@ -68,21 +71,19 @@ const StepDetail = () => {
           <div className="rounded-2xl border border-border/60 bg-card p-4 shadow-card text-center">
             <MapPin className="mx-auto mb-1.5 h-4 w-4 text-muted-foreground" />
             <p className="text-[10px] font-medium text-muted-foreground">Dove</p>
-            <p className="mt-0.5 text-xs font-bold text-foreground line-clamp-2">{step.whereToGo.split(' ').slice(0, 3).join(' ')}</p>
+            <p className="mt-0.5 text-xs font-bold text-foreground line-clamp-2">{step.where_to_go.split(' ').slice(0, 3).join(' ')}</p>
           </div>
         </div>
 
-        {/* Where to go */}
         <div className="mb-6 animate-slide-up" style={{ animationDelay: '150ms' }}>
           <h3 className="mb-3 text-sm font-bold text-foreground">📍 Dove andare</h3>
           <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
             <MapPin className="h-5 w-5 shrink-0 text-primary" />
-            <p className="flex-1 text-sm text-foreground">{step.whereToGo}</p>
+            <p className="flex-1 text-sm text-foreground">{step.where_to_go}</p>
             <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
           </div>
         </div>
 
-        {/* Documents */}
         <div className="mb-6 animate-slide-up" style={{ animationDelay: '200ms' }}>
           <h3 className="mb-3 text-sm font-bold text-foreground">📄 Documenti necessari</h3>
           <div className="space-y-2">
@@ -98,14 +99,13 @@ const StepDetail = () => {
           </div>
         </div>
 
-        {/* Checklist */}
         <div className="mb-8 animate-slide-up" style={{ animationDelay: '250ms' }}>
           <h3 className="mb-3 text-sm font-bold text-foreground">✅ Checklist</h3>
           <div className="space-y-2">
-            {checklist.map((item) => (
+            {step.checklist.map((item, index) => (
               <button
                 key={item.id}
-                onClick={() => toggleItem(item.id)}
+                onClick={() => toggleItem(index)}
                 className={`flex w-full items-center gap-3.5 rounded-2xl border p-4 text-left transition-all duration-200 ${
                   item.checked
                     ? 'border-success/30 bg-success/5'
@@ -126,14 +126,14 @@ const StepDetail = () => {
         </div>
       </div>
 
-      {/* Sticky bottom CTA */}
       <div className="sticky bottom-0 z-20 border-t border-border/30 glass-strong px-6 py-4 safe-bottom">
         <button
+          onClick={handleComplete}
           disabled={!allChecked}
           className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
           <Check className="h-5 w-5" />
-          {allChecked ? 'Segna come completato' : `Completa la checklist (${checkedCount}/${checklist.length})`}
+          {allChecked ? 'Segna come completato' : `Completa la checklist (${checkedCount}/${step.checklist.length})`}
         </button>
       </div>
     </div>

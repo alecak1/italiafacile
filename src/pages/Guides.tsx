@@ -3,37 +3,48 @@ import { Search, BookOpen, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import GuideCard from '@/components/GuideCard';
-import { mockGuides } from '@/data/mockData';
+import { useGuides } from '@/hooks/useGuides';
+import { useProfile } from '@/hooks/useProfile';
 import { GUIDE_CATEGORIES, GuideCategory } from '@/types';
 
 const Guides = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { profile } = useProfile();
+  const { guides, loading } = useGuides(user ? profile?.corridor_id : undefined);
   const [activeCategory, setActiveCategory] = useState<GuideCategory | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filtered = mockGuides.filter((g) => {
+  const filtered = guides.filter((g) => {
     const matchesCategory = activeCategory === 'all' || g.category === activeCategory;
     const matchesSearch = g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       g.summary.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
+  const mapGuide = (g: typeof guides[0]) => ({
+    id: g.id,
+    title: g.title,
+    category: g.category as any,
+    readingTime: g.reading_time,
+    summary: g.summary,
+    sections: g.sections,
+  });
+
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="bg-card px-5 pt-12 pb-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/10">
+      <div className="bg-card px-6 pt-12 pb-6">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary/10">
             <BookOpen className="h-5 w-5 text-secondary" />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold text-foreground">Guide</h1>
+            <h1 className="text-2xl font-black tracking-tight text-foreground">Guide</h1>
             <p className="text-sm text-muted-foreground">Tutto spiegato semplice.</p>
           </div>
         </div>
 
-        {/* Search */}
-        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-background px-4 py-3">
+        <div className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-background px-4 py-3.5">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input
             type="text"
@@ -45,8 +56,7 @@ const Guides = () => {
         </div>
       </div>
 
-      {/* Category filters */}
-      <div className="flex gap-2 overflow-x-auto px-5 py-4 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto px-6 py-4 scrollbar-none">
         <button
           onClick={() => setActiveCategory('all')}
           className={`shrink-0 rounded-full px-4 py-2.5 text-xs font-semibold transition-all ${
@@ -72,12 +82,15 @@ const Guides = () => {
         ))}
       </div>
 
-      {/* Guides list */}
-      <div className="space-y-3 px-5">
-        {filtered.length > 0 ? (
+      <div className="space-y-3 px-6">
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary/30 border-t-primary" />
+          </div>
+        ) : filtered.length > 0 ? (
           filtered.map((guide, i) => (
             <div key={guide.id} className="animate-fade-in" style={{ animationDelay: `${i * 60}ms` }}>
-              <GuideCard guide={guide} />
+              <GuideCard guide={mapGuide(guide)} />
             </div>
           ))
         ) : (
@@ -90,7 +103,6 @@ const Guides = () => {
           </div>
         )}
 
-        {/* CTA for non-logged-in users */}
         {!user && (
           <div className="mt-6 animate-fade-in">
             <button

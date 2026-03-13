@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, MapPin, Briefcase, GraduationCap, Heart } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+import { useCorridors } from '@/hooks/useCorridors';
+import { useJourney } from '@/hooks/useJourney';
+import { supabase } from '@/integrations/supabase/client';
 
 interface OnboardingData {
   name: string;
@@ -14,18 +19,15 @@ interface OnboardingData {
   languageLevel: string;
 }
 
-const STEPS = [
-  'name',
-  'nationality',
-  'destination',
-  'reason',
-  'status',
-  'language',
-] as const;
+const STEPS = ['name', 'nationality', 'destination', 'reason', 'status', 'language'] as const;
 
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { updateProfile } = useProfile();
+  const { getDefaultCorridor } = useCorridors();
   const [step, setStep] = useState(0);
+  const [saving, setSaving] = useState(false);
   const [data, setData] = useState<OnboardingData>({
     name: '',
     nationality: 'Bulgaria',
@@ -52,12 +54,54 @@ const Onboarding = () => {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < STEPS.length - 1) {
       setStep(step + 1);
     } else {
+      setSaving(true);
+      const corridor = getDefaultCorridor();
+
+      // Save to database
+      await updateProfile({
+        name: data.name,
+        nationality: data.nationality,
+        destination_country: data.destinationCountry,
+        destination_city: data.destinationCity,
+        reason_for_moving: data.reasonForMoving,
+        already_in_country: data.alreadyInCountry === 'yes',
+        has_tax_code: data.hasTaxCode === 'yes',
+        job_status: data.jobStatus,
+        language_level: data.languageLevel,
+        onboarding_completed: true,
+        corridor_id: corridor?.id || null,
+      });
+
+      // Initialize journey progress
+      if (user && corridor) {
+        const { data: templates } = await supabase
+          .from('journey_step_templates')
+          .select('id, step_order')
+          .eq('corridor_id', corridor.id)
+          .eq('is_active', true)
+          .order('step_order', { ascending: true });
+
+        if (templates && templates.length > 0) {
+          const inserts = templates.map((t: any, i: number) => ({
+            user_id: user.id,
+            step_template_id: t.id,
+            status: i === 0 ? 'current' : 'locked',
+            checklist_state: [],
+          }));
+
+          await supabase.from('user_step_progress').insert(inserts);
+        }
+      }
+
+      // Keep localStorage as fallback for display name
       localStorage.setItem('onboarding_complete', 'true');
       localStorage.setItem('user_name', data.name);
+
+      setSaving(false);
       navigate('/dashboard');
     }
   };
@@ -156,15 +200,9 @@ const Onboarding = () => {
               <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">Questo ci aiuta a creare il percorso giusto per te.</p>
             </div>
             <div className="space-y-3">
-              <OptionButton value="work" selected={data.reasonForMoving === 'work'} onClick={() => setData({ ...data, reasonForMoving: 'work' })} icon={<Briefcase className="h-5 w-5" />}>
-                Lavoro
-              </OptionButton>
-              <OptionButton value="study" selected={data.reasonForMoving === 'study'} onClick={() => setData({ ...data, reasonForMoving: 'study' })} icon={<GraduationCap className="h-5 w-5" />}>
-                Studio
-              </OptionButton>
-              <OptionButton value="family" selected={data.reasonForMoving === 'family'} onClick={() => setData({ ...data, reasonForMoving: 'family' })} icon={<Heart className="h-5 w-5" />}>
-                Famiglia
-              </OptionButton>
+              <OptionButton value="work" selected={data.reasonForMoving === 'work'} onClick={() => setData({ ...data, reasonForMoving: 'work' })} icon={<Briefcase className="h-5 w-5" />}>Lavoro</OptionButton>
+              <OptionButton value="study" selected={data.reasonForMoving === 'study'} onClick={() => setData({ ...data, reasonForMoving: 'study' })} icon={<GraduationCap className="h-5 w-5" />}>Studio</OptionButton>
+              <OptionButton value="family" selected={data.reasonForMoving === 'family'} onClick={() => setData({ ...data, reasonForMoving: 'family' })} icon={<Heart className="h-5 w-5" />}>Famiglia</OptionButton>
             </div>
           </div>
         );
@@ -193,9 +231,7 @@ const Onboarding = () => {
                     { value: 'student', label: 'Studente' },
                     { value: 'freelance', label: 'Libero professionista' },
                   ].map((opt) => (
-                    <OptionButton key={opt.value} value={opt.value} selected={data.jobStatus === opt.value} onClick={() => setData({ ...data, jobStatus: opt.value })}>
-                      {opt.label}
-                    </OptionButton>
+                    <OptionButton key={opt.value} value={opt.value} selected={data.jobStatus === opt.value} onClick={() => setData({ ...data, jobStatus: opt.value })}>{opt.label}</OptionButton>
                   ))}
                 </div>
               </div>
@@ -217,9 +253,7 @@ const Onboarding = () => {
                 { value: 'intermediate', label: 'Intermedio', emoji: '🟢' },
                 { value: 'advanced', label: 'Avanzato', emoji: '💚' },
               ].map((opt) => (
-                <OptionButton key={opt.value} value={opt.value} selected={data.languageLevel === opt.value} onClick={() => setData({ ...data, languageLevel: opt.value })}>
-                  {opt.emoji} {opt.label}
-                </OptionButton>
+                <OptionButton key={opt.value} value={opt.value} selected={data.languageLevel === opt.value} onClick={() => setData({ ...data, languageLevel: opt.value })}>{opt.emoji} {opt.label}</OptionButton>
               ))}
             </div>
           </div>
@@ -229,7 +263,6 @@ const Onboarding = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      {/* Progress bar */}
       <div className="sticky top-0 z-10 glass-strong border-b border-border/30 px-5 pt-5 pb-4">
         <div className="flex items-center gap-3">
           {step > 0 && (
@@ -244,20 +277,24 @@ const Onboarding = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="flex-1 px-6 py-8">
         {renderStep()}
       </div>
 
-      {/* CTA */}
       <div className="sticky bottom-0 glass-strong border-t border-border/30 px-6 pb-8 pt-5">
         <button
           onClick={handleNext}
-          disabled={!canContinue()}
+          disabled={!canContinue() || saving}
           className="flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl gradient-hero text-base font-bold text-primary-foreground shadow-cta transition-all active:scale-[0.98] disabled:opacity-40 disabled:shadow-none"
         >
-          {step === STEPS.length - 1 ? 'Inizia il tuo percorso' : 'Continua'}
-          <ArrowRight className="h-5 w-5" />
+          {saving ? (
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
+          ) : (
+            <>
+              {step === STEPS.length - 1 ? 'Inizia il tuo percorso' : 'Continua'}
+              <ArrowRight className="h-5 w-5" />
+            </>
+          )}
         </button>
       </div>
     </div>
