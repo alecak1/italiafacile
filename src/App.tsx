@@ -73,6 +73,16 @@ const AppRoutes = () => {
         <Route path="/step/:id" element={<ProtectedRoute><RequireOnboarding><StepDetail /></RequireOnboarding></ProtectedRoute>} />
         <Route path="/community" element={<ProtectedRoute><RequireOnboarding><Community /></RequireOnboarding></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><RequireOnboarding><Profile /></RequireOnboarding></ProtectedRoute>} />
+
+        {/* Admin routes */}
+        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route index element={<AdminSteps />} />
+          <Route path="steps" element={<AdminSteps />} />
+          <Route path="guides" element={<AdminGuides />} />
+          <Route path="corridors" element={<AdminCorridors />} />
+          <Route path="community" element={<AdminCommunity />} />
+        </Route>
+
         <Route path="*" element={<NotFound />} />
       </Routes>
       <AppHeader />
