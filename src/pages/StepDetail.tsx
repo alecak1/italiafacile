@@ -7,6 +7,7 @@ import { useJourney } from '@/hooks/useJourney';
 import DocumentCard from '@/components/step-detail/DocumentCard';
 import LocationCard from '@/components/step-detail/LocationCard';
 import PreparationChecklist from '@/components/step-detail/PreparationChecklist';
+import CommunityInsightsSection from '@/components/community/CommunityInsightsSection';
 
 const StepDetail = () => {
   const { id } = useParams();
