@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAdminCommunityModeration } from '@/hooks/useCommunityInsights';
 import { Trash2, Check, X, Star, Lightbulb, BookOpen, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
@@ -19,7 +19,7 @@ const AdminCommunity = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [questionsLoading, setQuestionsLoading] = useState(true);
 
-  useState(() => {
+  useEffect(() => {
     (async () => {
       const { data } = await supabase
         .from('questions')
@@ -30,7 +30,7 @@ const AdminCommunity = () => {
       }
       setQuestionsLoading(false);
     })();
-  });
+  }, []);
 
   const handleDeleteQuestion = async (id: string) => {
     if (!confirm('Eliminare questa domanda e tutte le risposte?')) return;
