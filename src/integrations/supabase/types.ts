@@ -52,6 +52,155 @@ export type Database = {
           },
         ]
       }
+      community_experiences: {
+        Row: {
+          advice: string
+          city: string
+          corridor_id: string | null
+          created_at: string
+          id: string
+          problems: string
+          status: string
+          step_template_id: string | null
+          time_required: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          advice?: string
+          city?: string
+          corridor_id?: string | null
+          created_at?: string
+          id?: string
+          problems?: string
+          status?: string
+          step_template_id?: string | null
+          time_required?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          advice?: string
+          city?: string
+          corridor_id?: string | null
+          created_at?: string
+          id?: string
+          problems?: string
+          status?: string
+          step_template_id?: string | null
+          time_required?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_experiences_corridor_id_fkey"
+            columns: ["corridor_id"]
+            isOneToOne: false
+            referencedRelation: "relocation_corridors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_experiences_step_template_id_fkey"
+            columns: ["step_template_id"]
+            isOneToOne: false
+            referencedRelation: "journey_step_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_tips: {
+        Row: {
+          category: string
+          city: string
+          corridor_id: string | null
+          created_at: string
+          description: string
+          id: string
+          is_highlighted: boolean
+          status: string
+          step_template_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          city?: string
+          corridor_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          is_highlighted?: boolean
+          status?: string
+          step_template_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          city?: string
+          corridor_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          is_highlighted?: boolean
+          status?: string
+          step_template_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_tips_corridor_id_fkey"
+            columns: ["corridor_id"]
+            isOneToOne: false
+            referencedRelation: "relocation_corridors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "community_tips_step_template_id_fkey"
+            columns: ["step_template_id"]
+            isOneToOne: false
+            referencedRelation: "journey_step_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_votes: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_votes_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "community_experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       guides: {
         Row: {
           category: string
@@ -311,6 +460,35 @@ export type Database = {
           slug?: string
         }
         Relationships: []
+      }
+      tip_votes: {
+        Row: {
+          created_at: string
+          id: string
+          tip_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tip_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tip_votes_tip_id_fkey"
+            columns: ["tip_id"]
+            isOneToOne: false
+            referencedRelation: "community_tips"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
