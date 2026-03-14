@@ -65,7 +65,7 @@ const StepDetail = () => {
         </div>
       )}
 
-      <div className="px-6 md:px-8 lg:px-0 md:max-w-3xl md:mx-auto">
+      <div className="px-6 md:px-8 lg:px-0 w-full max-w-4xl mx-auto">
         {/* ── Step indicator + Category ── */}
         <div className="mt-5 mb-3 flex items-center gap-2 animate-fade-in">
           <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
