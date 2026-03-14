@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save } from 'lucide-react';
+import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save, Lightbulb, BookOpen, Clock as ClockIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
+import { useMyContributions } from '@/hooks/useCommunityInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import LanguageSelector from '@/components/LanguageSelector';
