@@ -237,7 +237,11 @@
     "jobEmployed": "Employed",
     "jobUnemployed": "Job seeking",
     "jobStudent": "Student",
-    "jobFreelance": "Freelancer"
+    "jobFreelance": "Freelancer",
+    "myContributions": "My contributions",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "pending": "Under review"
   },
   "progress": {
     "yourJourney": "Your journey",

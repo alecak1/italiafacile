@@ -237,7 +237,11 @@
     "jobEmployed": "Impiegato",
     "jobUnemployed": "In cerca di lavoro",
     "jobStudent": "Studente",
-    "jobFreelance": "Libero professionista"
+    "jobFreelance": "Libero professionista",
+    "myContributions": "I miei contributi",
+    "approved": "Approvato",
+    "rejected": "Rifiutato",
+    "pending": "In revisione"
   },
   "progress": {
     "yourJourney": "Il tuo percorso",

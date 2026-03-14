@@ -237,7 +237,11 @@
     "jobEmployed": "Служител",
     "jobUnemployed": "Търсещ работа",
     "jobStudent": "Студент",
-    "jobFreelance": "Свободна практика"
+    "jobFreelance": "Свободна практика",
+    "myContributions": "Моите приноси",
+    "approved": "Одобрено",
+    "rejected": "Отхвърлено",
+    "pending": "В преглед"
   },
   "progress": {
     "yourJourney": "Вашият маршрут",
