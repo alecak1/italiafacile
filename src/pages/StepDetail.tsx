@@ -63,21 +63,25 @@ const StepDetail = () => {
         </div>
       </div>
 
-      <div className="max-w-[1100px] mx-auto px-5 md:px-8">
-        {/* ── Hero Illustration ── */}
-        {step.image_url && (
-          <div className="mt-6 mb-8 animate-fade-in">
-            <div className="relative w-full max-w-[1100px] overflow-hidden rounded-[20px] md:rounded-[24px] shadow-card">
-              <img
-                src={step.image_url}
-                alt={step.title}
-                className="w-full h-[200px] md:h-[320px] object-cover"
-              />
-              {/* Soft bottom fade */}
-              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
-            </div>
+      {/* ── Hero Illustration (wider than content) ── */}
+      {step.image_url && (
+        <div className="max-w-[1280px] mx-auto px-4 md:px-6 mt-6 mb-8 animate-fade-in">
+          <div className="relative w-full overflow-hidden rounded-[20px] md:rounded-[24px] shadow-card">
+            <img
+              src={step.image_url}
+              alt={step.title}
+              className="w-full h-[200px] md:h-[320px] object-cover"
+            />
+            {/* Soft side fades */}
+            <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background/60 to-transparent" />
+            <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background/60 to-transparent" />
+            {/* Soft bottom fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
           </div>
-        )}
+        </div>
+      )}
+
+      <div className="max-w-[1100px] mx-auto px-5 md:px-8">
 
         {/* ── Step indicator + Progress ── */}
         <div className="mb-6 animate-fade-in">
