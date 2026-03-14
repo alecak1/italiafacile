@@ -245,7 +245,43 @@ const Profile = () => {
         ))}
       </div>
 
-      <div className="mt-6 px-6 space-y-2">
+      {/* My Contributions */}
+      {!contribLoading && (myTips.length > 0 || myExperiences.length > 0) && (
+        <div className="px-6 pt-2 pb-4">
+          <h2 className="mb-3 text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('profile.myContributions')}</h2>
+          <div className="space-y-2">
+            {myTips.map((tip) => (
+              <div key={tip.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+                <Lightbulb className="h-4 w-4 shrink-0 text-primary" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{tip.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{tip.city || '—'}</p>
+                </div>
+                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  tip.status === 'approved' ? 'bg-success/10 text-success' :
+                  tip.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                  'bg-warning/10 text-warning'
+                }`}>{tip.status === 'approved' ? t('profile.approved') : tip.status === 'rejected' ? t('profile.rejected') : t('profile.pending')}</span>
+              </div>
+            ))}
+            {myExperiences.map((exp) => (
+              <div key={exp.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+                <BookOpen className="h-4 w-4 shrink-0 text-secondary" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{exp.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{exp.city || '—'}</p>
+                </div>
+                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  exp.status === 'approved' ? 'bg-success/10 text-success' :
+                  exp.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                  'bg-warning/10 text-warning'
+                }`}>{exp.status === 'approved' ? t('profile.approved') : exp.status === 'rejected' ? t('profile.rejected') : t('profile.pending')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
         <button onClick={() => navigate('/journey')}
           className="group flex w-full items-center justify-between rounded-2xl border border-border/60 bg-card p-4 shadow-card transition-all hover:shadow-card-hover">
           <div className="flex items-center gap-3">
