@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAdminCommunityModeration } from '@/hooks/useCommunityInsights';
 import { Trash2, Check, X, Star, Lightbulb, BookOpen, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
