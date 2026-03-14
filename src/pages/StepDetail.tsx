@@ -7,6 +7,7 @@ import { useJourney } from '@/hooks/useJourney';
 import DocumentCard from '@/components/step-detail/DocumentCard';
 import LocationCard from '@/components/step-detail/LocationCard';
 import PreparationChecklist from '@/components/step-detail/PreparationChecklist';
+import CommunityInsightsSection from '@/components/community/CommunityInsightsSection';
 
 const StepDetail = () => {
   const { id } = useParams();
@@ -244,6 +245,13 @@ const StepDetail = () => {
               </div>
             </div>
           )}
+        </div>
+
+        {/* ── Community Insights (below official content) ── */}
+        <div className="mb-12 animate-slide-up" style={{ animationDelay: '280ms' }}>
+          <div className="border-t border-border/30 pt-8">
+            <CommunityInsightsSection stepTemplateId={step.id} corridorId={profile?.corridor_id} />
+          </div>
         </div>
       </div>
 

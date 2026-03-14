@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react';
-import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save } from 'lucide-react';
+import { MapPin, Check, ArrowRight, Settings, ChevronRight, LogOut, Camera, Pencil, Linkedin, Instagram, Facebook, X, Save, Lightbulb, BookOpen, Clock as ClockIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
+import { useMyContributions } from '@/hooks/useCommunityInsights';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -15,6 +16,7 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
   const { steps } = useJourney(profile?.corridor_id);
+  const { tips: myTips, experiences: myExperiences, loading: contribLoading } = useMyContributions();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -242,6 +244,43 @@ const Profile = () => {
           </div>
         ))}
       </div>
+
+      {/* My Contributions */}
+      {!contribLoading && (myTips.length > 0 || myExperiences.length > 0) && (
+        <div className="px-6 pt-2 pb-4">
+          <h2 className="mb-3 text-xs font-bold text-muted-foreground uppercase tracking-widest">{t('profile.myContributions')}</h2>
+          <div className="space-y-2">
+            {myTips.map((tip) => (
+              <div key={tip.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+                <Lightbulb className="h-4 w-4 shrink-0 text-primary" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{tip.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{tip.city || '—'}</p>
+                </div>
+                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  tip.status === 'approved' ? 'bg-success/10 text-success' :
+                  tip.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                  'bg-warning/10 text-warning'
+                }`}>{tip.status === 'approved' ? t('profile.approved') : tip.status === 'rejected' ? t('profile.rejected') : t('profile.pending')}</span>
+              </div>
+            ))}
+            {myExperiences.map((exp) => (
+              <div key={exp.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+                <BookOpen className="h-4 w-4 shrink-0 text-secondary" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{exp.title}</p>
+                  <p className="text-[10px] text-muted-foreground">{exp.city || '—'}</p>
+                </div>
+                <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase ${
+                  exp.status === 'approved' ? 'bg-success/10 text-success' :
+                  exp.status === 'rejected' ? 'bg-destructive/10 text-destructive' :
+                  'bg-warning/10 text-warning'
+                }`}>{exp.status === 'approved' ? t('profile.approved') : exp.status === 'rejected' ? t('profile.rejected') : t('profile.pending')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 px-6 space-y-2">
         <button onClick={() => navigate('/journey')}
