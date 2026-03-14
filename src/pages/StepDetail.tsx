@@ -133,7 +133,7 @@ const StepDetail = () => {
             </p>
           </div>
 
-          {/* Where to Go + Documents */}
+          {/* Where to Go */}
           <div className="space-y-3">
             <div className="flex items-center gap-2 mb-1">
               <MapPin className="h-4 w-4 text-primary" />
@@ -141,8 +141,6 @@ const StepDetail = () => {
                 {t('step.whereToGo')}
               </h3>
             </div>
-
-            {/* Where to go card */}
             <button className="flex w-full items-center gap-3.5 rounded-2xl border border-border/50 bg-card p-4 shadow-card transition-all hover:shadow-card-hover hover:border-primary/20 active:scale-[0.99]">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/8">
                 <MapPin className="h-5 w-5 text-primary" />
@@ -153,22 +151,32 @@ const StepDetail = () => {
               </div>
               <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
             </button>
-
-            {/* Documents inline */}
-            {step.documents.map((doc, i) => (
-              <div key={i} className="flex items-center gap-3.5 rounded-2xl border border-border/50 bg-card p-4 shadow-card">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/8">
-                  <FileText className="h-5 w-5 text-secondary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-foreground">{doc.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>
-                </div>
-                <ChevronRight className="h-4 w-4 shrink-0 text-border" />
-              </div>
-            ))}
           </div>
         </div>
+
+        {/* ── Required Documents (separate section) ── */}
+        {step.documents.length > 0 && (
+          <div className="mb-8 animate-slide-up" style={{ animationDelay: '160ms' }}>
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-4 w-4 text-secondary" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{t('step.requiredDocs')}</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {step.documents.map((doc, i) => (
+                <div key={i} className="flex items-center gap-3.5 rounded-2xl border border-border/50 bg-card p-4 shadow-card transition-all hover:shadow-card-hover">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/8">
+                    <FileText className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">{doc.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 shrink-0 text-border" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Checklist ── */}
         <div className="mb-10 animate-slide-up" style={{ animationDelay: '200ms' }}>
