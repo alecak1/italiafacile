@@ -15,6 +15,7 @@ export interface StepTemplate {
   category: string;
   documents: { name: string; description: string }[];
   checklist_items: string[];
+  image_url: string | null;
 }
 
 export interface UserStepProgress {

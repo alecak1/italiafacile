@@ -39,6 +39,12 @@ const StepDetail = () => {
       </div>
 
       <div className="px-6">
+        {step.image_url && (
+          <div className="animate-fade-in mb-5 pt-2 -mx-6">
+            <img src={step.image_url} alt={step.title} className="w-full max-h-52 object-cover" />
+          </div>
+        )}
+
         <div className="animate-fade-in mb-7 pt-2">
           <div className="mb-3 inline-flex items-center rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
             {step.status === 'current' ? t('step.currentStep') : step.status === 'completed' ? t('step.completedStep') : t('step.lockedStep')}
