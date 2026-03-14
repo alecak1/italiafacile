@@ -101,7 +101,8 @@ const StepDetail = () => {
         </>
       )}
 
-        {/* ── Info Cards Row (4 cards like reference) ── */}
+      <div className="px-6 md:px-8 lg:px-0 w-full max-w-4xl mx-auto mt-6">
+        {/* ── Info Cards Row ── */}
         <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up" style={{ animationDelay: '80ms' }}>
           {[
             { icon: Clock, label: t('step.time'), value: step.estimated_time },
