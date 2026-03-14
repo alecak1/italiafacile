@@ -246,6 +246,13 @@ const StepDetail = () => {
             </div>
           )}
         </div>
+
+        {/* ── Community Insights (below official content) ── */}
+        <div className="mb-12 animate-slide-up" style={{ animationDelay: '280ms' }}>
+          <div className="border-t border-border/30 pt-8">
+            <CommunityInsightsSection stepTemplateId={step.id} corridorId={profile?.corridor_id} />
+          </div>
+        </div>
       </div>
 
       {/* ── Sticky CTA ── */}
