@@ -16,6 +16,7 @@ const Profile = () => {
   const { user, signOut } = useAuth();
   const { profile, updateProfile } = useProfile();
   const { steps } = useJourney(profile?.corridor_id);
+  const { tips: myTips, experiences: myExperiences, loading: contribLoading } = useMyContributions();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [editing, setEditing] = useState(false);
