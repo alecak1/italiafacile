@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Euro, FileText, Check, ExternalLink, Lightbulb, ChevronRight, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, Euro, FileText, Check, Lightbulb, Sparkles, Navigation } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useProfile } from '@/hooks/useProfile';
 import { useJourney } from '@/hooks/useJourney';
+import DocumentCard from '@/components/step-detail/DocumentCard';
+import LocationCard from '@/components/step-detail/LocationCard';
+import PreparationChecklist from '@/components/step-detail/PreparationChecklist';
 
 const StepDetail = () => {
   const { id } = useParams();
@@ -10,6 +14,7 @@ const StepDetail = () => {
   const { t } = useTranslation();
   const { profile } = useProfile();
   const { steps, updateChecklist, completeStep } = useJourney(profile?.corridor_id);
+  const [preparedDocs, setPreparedDocs] = useState<Record<number, boolean>>({});
 
   const step = steps.find((s) => s.id === id);
 
@@ -25,13 +30,18 @@ const StepDetail = () => {
   const allChecked = step.checklist.every((item) => item.checked);
   const checkedCount = step.checklist.filter((item) => item.checked).length;
   const progressPercent = step.checklist.length > 0 ? (checkedCount / step.checklist.length) * 100 : 0;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(step.where_to_go)}`;
 
   const handleComplete = async () => {
     if (allChecked) { await completeStep(step.id); navigate('/journey'); }
   };
 
+  const toggleDocPrepared = (index: number) => {
+    setPreparedDocs(prev => ({ ...prev, [index]: !prev[index] }));
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-32">
+    <div className="min-h-screen bg-background pb-40">
       {/* ── Top bar ── */}
       <div className="sticky top-0 z-20 glass-strong border-b border-border/20">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-5 py-3">
@@ -41,13 +51,12 @@ const StepDetail = () => {
           >
             <ArrowLeft className="h-5 w-5 text-foreground" />
           </button>
-          {/* Mini progress in top bar */}
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold text-muted-foreground">
               {t('step.stepOf', { current: step.step_order, total: steps.length })}
             </span>
             <div className="hidden sm:flex items-center gap-1">
-              {steps.map((s, i) => (
+              {steps.map((s) => (
                 <div
                   key={s.id}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -59,39 +68,30 @@ const StepDetail = () => {
               ))}
             </div>
           </div>
-          <div className="w-9" /> {/* Spacer for centering */}
+          <div className="w-9" />
         </div>
       </div>
 
-      {/* ── Hero Illustration (wider than content) ── */}
+      {/* ── Hero Illustration ── */}
       {step.image_url && (
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 mt-6 mb-8 animate-fade-in">
           <div className="relative w-full overflow-hidden rounded-[20px] md:rounded-[24px] shadow-card">
-            <img
-              src={step.image_url}
-              alt={step.title}
-              className="w-full h-[200px] md:h-[320px] object-cover"
-            />
-            {/* Soft side fades */}
+            <img src={step.image_url} alt={step.title} className="w-full h-[200px] md:h-[320px] object-cover" />
             <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-background/60 to-transparent" />
             <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-background/60 to-transparent" />
-            {/* Soft bottom fade */}
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background/80 to-transparent" />
           </div>
         </div>
       )}
 
       <div className="max-w-[1100px] mx-auto px-5 md:px-8">
-
-        {/* ── Step indicator + Progress ── */}
-        <div className="mb-6 animate-fade-in">
+        {/* ── Step indicator + Title + Progress ── */}
+        <div className="mb-8 animate-fade-in">
           <div className="flex items-center gap-2.5 mb-4">
             <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${
-              step.status === 'completed'
-                ? 'bg-success/10 text-success'
-                : step.status === 'current'
-                  ? 'bg-primary/10 text-primary'
-                  : 'bg-muted text-muted-foreground'
+              step.status === 'completed' ? 'bg-success/10 text-success' :
+              step.status === 'current' ? 'bg-primary/10 text-primary' :
+              'bg-muted text-muted-foreground'
             }`}>
               {step.status === 'completed' && <Check className="h-3.5 w-3.5" />}
               {step.status === 'current' && <Sparkles className="h-3.5 w-3.5" />}
@@ -100,16 +100,13 @@ const StepDetail = () => {
             <span className="text-xs font-medium text-muted-foreground">{step.category}</span>
           </div>
 
-          {/* Title */}
           <h1 className="text-[26px] md:text-[32px] font-black tracking-tight leading-[1.15] text-foreground mb-3">
             {step.title}
           </h1>
-          {/* Description */}
           <p className="text-[15px] md:text-base leading-relaxed text-muted-foreground max-w-2xl">
             {step.explanation}
           </p>
 
-          {/* Progress bar */}
           {step.checklist.length > 0 && (
             <div className="mt-5 flex items-center gap-3">
               <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
@@ -132,10 +129,7 @@ const StepDetail = () => {
             { icon: Euro, label: t('step.cost'), value: step.cost },
             { icon: MapPin, label: t('step.where'), value: step.where_to_go.split(' ').slice(0, 3).join(' ') },
           ].map(({ icon: Icon, label, value }, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center rounded-2xl border border-border/40 bg-card p-5 shadow-card text-center transition-all hover:shadow-card-hover"
-            >
+            <div key={i} className="flex flex-col items-center rounded-2xl border border-border/40 bg-card p-5 shadow-card text-center transition-all hover:shadow-card-hover">
               <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary/8">
                 <Icon className="h-4 w-4 text-primary" />
               </div>
@@ -156,66 +150,59 @@ const StepDetail = () => {
                 <h3 className="text-xs font-bold uppercase tracking-widest text-warning mb-2">
                   {t('step.whyImportant')}
                 </h3>
-                <p className="text-sm leading-relaxed text-foreground/80">
-                  {step.why_it_matters}
-                </p>
+                <p className="text-sm leading-relaxed text-foreground/80">{step.why_it_matters}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── Where to Go + Documents ── */}
-        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 animate-slide-up" style={{ animationDelay: '160ms' }}>
-          {/* Where */}
-          <div>
-            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
-              <MapPin className="h-3.5 w-3.5 text-primary" />
-              {t('step.whereToGo')}
-            </h3>
-            <button className="flex w-full items-center gap-3.5 rounded-2xl border border-border/40 bg-card p-4 shadow-card transition-all hover:shadow-card-hover hover:border-primary/20 active:scale-[0.99]">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/8">
-                <MapPin className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-semibold text-foreground leading-snug">{step.where_to_go}</p>
-              </div>
-              <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground" />
-            </button>
-          </div>
-
+        {/* ── Documents + Location (2-col) ── */}
+        <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-8 animate-slide-up" style={{ animationDelay: '160ms' }}>
           {/* Documents */}
           {step.documents.length > 0 && (
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                 <FileText className="h-3.5 w-3.5 text-secondary" />
                 {t('step.requiredDocs')}
               </h3>
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {step.documents.map((doc, i) => (
-                  <div key={i} className="flex items-center gap-3.5 rounded-2xl border border-border/40 bg-card p-4 shadow-card transition-all hover:shadow-card-hover">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/8">
-                      <FileText className="h-5 w-5 text-secondary" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-foreground">{doc.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{doc.description}</p>
-                    </div>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-border" />
-                  </div>
+                  <DocumentCard
+                    key={i}
+                    name={doc.name}
+                    description={doc.description}
+                    index={i}
+                    isPrepared={!!preparedDocs[i]}
+                    onTogglePrepared={() => toggleDocPrepared(i)}
+                  />
                 ))}
               </div>
             </div>
           )}
+
+          {/* Location */}
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+              <MapPin className="h-3.5 w-3.5 text-primary" />
+              {t('step.whereToGo')}
+            </h3>
+            <LocationCard whereToGo={step.where_to_go} />
+          </div>
+        </div>
+
+        {/* ── Preparation Checklist ── */}
+        <div className="mb-8 animate-slide-up" style={{ animationDelay: '200ms' }}>
+          <PreparationChecklist documents={step.documents} />
         </div>
 
         {/* ── Checklist ── */}
-        <div className="mb-12 animate-slide-up" style={{ animationDelay: '200ms' }}>
+        <div className="mb-12 animate-slide-up" style={{ animationDelay: '240ms' }}>
           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">{t('step.checklist')}</h3>
 
           {step.checklist.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border bg-muted/30 py-10 text-center">
               <Check className="mx-auto h-6 w-6 text-muted-foreground/40 mb-2" />
-              <p className="text-sm text-muted-foreground">Nessun elemento nella checklist</p>
+              <p className="text-sm text-muted-foreground">{t('stepDetail.noChecklist')}</p>
             </div>
           ) : (
             <div className="space-y-2.5">
@@ -230,20 +217,14 @@ const StepDetail = () => {
                   }`}
                 >
                   <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border-2 transition-all duration-300 ${
-                    item.checked
-                      ? 'border-success bg-success'
-                      : 'border-border group-hover:border-primary/40'
+                    item.checked ? 'border-success bg-success' : 'border-border group-hover:border-primary/40'
                   }`}>
                     <Check className={`h-4 w-4 transition-all duration-300 ${
-                      item.checked
-                        ? 'text-success-foreground opacity-100 scale-100'
-                        : 'text-transparent opacity-0 scale-75'
+                      item.checked ? 'text-success-foreground opacity-100 scale-100' : 'text-transparent opacity-0 scale-75'
                     }`} />
                   </div>
                   <span className={`text-sm leading-snug transition-all duration-300 ${
-                    item.checked
-                      ? 'text-muted-foreground line-through'
-                      : 'text-foreground font-medium'
+                    item.checked ? 'text-muted-foreground line-through' : 'text-foreground font-medium'
                   }`}>
                     {item.label}
                   </span>
@@ -252,15 +233,14 @@ const StepDetail = () => {
             </div>
           )}
 
-          {/* Completion celebration */}
           {allChecked && step.checklist.length > 0 && (
             <div className="mt-6 flex items-center gap-3 rounded-2xl border border-success/20 bg-success/5 p-5 animate-fade-in">
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-success/15">
                 <Sparkles className="h-5 w-5 text-success" />
               </div>
               <div>
-                <p className="text-sm font-bold text-success">Tutto completato! 🎉</p>
-                <p className="text-xs text-success/70 mt-0.5">Puoi procedere al prossimo step.</p>
+                <p className="text-sm font-bold text-success">{t('stepDetail.allDone')} 🎉</p>
+                <p className="text-xs text-success/70 mt-0.5">{t('stepDetail.canProceed')}</p>
               </div>
             </div>
           )}
@@ -269,7 +249,20 @@ const StepDetail = () => {
 
       {/* ── Sticky CTA ── */}
       <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border/20 glass-strong safe-bottom">
-        <div className="flex justify-center px-5 py-4 max-w-[1100px] mx-auto">
+        <div className="flex flex-col items-center gap-2.5 px-5 py-4 max-w-[1100px] mx-auto">
+          {/* Secondary: Navigate to office */}
+          {step.where_to_go && (
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-11 w-full max-w-lg items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/5 text-sm font-semibold text-primary transition-all hover:bg-primary/10 active:scale-[0.98]"
+            >
+              <Navigation className="h-4 w-4" />
+              {t('stepDetail.goToOffice')}
+            </a>
+          )}
+          {/* Primary: Mark complete */}
           <button
             onClick={handleComplete}
             disabled={!allChecked}
