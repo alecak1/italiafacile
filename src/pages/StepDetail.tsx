@@ -244,7 +244,7 @@ const StepDetail = () => {
 
       {/* ── Sticky CTA ── */}
       <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-border/20 glass-strong safe-bottom">
-        <div className="flex justify-center px-6 py-4 md:max-w-3xl md:mx-auto">
+        <div className="flex justify-center px-6 py-4 max-w-4xl mx-auto">
           <button
             onClick={handleComplete}
             disabled={!allChecked}
