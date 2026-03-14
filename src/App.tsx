@@ -18,6 +18,11 @@ import Onboarding from "./pages/Onboarding";
 import AuthPage from "./pages/AuthPage";
 import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
+import AdminLayout from "./pages/AdminLayout";
+import AdminSteps from "./pages/AdminSteps";
+import AdminGuides from "./pages/AdminGuides";
+import AdminCorridors from "./pages/AdminCorridors";
+import AdminCommunity from "./pages/AdminCommunity";
 
 const queryClient = new QueryClient();
 
