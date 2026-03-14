@@ -282,6 +282,7 @@ const Profile = () => {
         </div>
       )}
 
+      <div className="mt-6 px-6 space-y-2">
         <button onClick={() => navigate('/journey')}
           className="group flex w-full items-center justify-between rounded-2xl border border-border/60 bg-card p-4 shadow-card transition-all hover:shadow-card-hover">
           <div className="flex items-center gap-3">
