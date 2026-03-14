@@ -32,64 +32,77 @@ const StepDetail = () => {
 
   return (
     <div className="min-h-screen bg-background pb-28">
-      {/* ── Hero Image ── */}
+      {/* ── Hero with overlaid content ── */}
       {step.image_url ? (
-        <div className="relative w-full">
-          <div className="h-[220px] md:h-[300px] w-full overflow-hidden rounded-b-[20px] md:rounded-b-[28px]">
+        <div className="relative w-full max-w-4xl mx-auto px-4 md:px-8 lg:px-0 pt-4">
+          <div className="relative h-[320px] md:h-[400px] w-full overflow-hidden rounded-[20px] md:rounded-[28px]">
             <img
               src={step.image_url}
               alt={step.title}
               className="h-full w-full object-cover"
             />
-          </div>
-          {/* Gradient fade into background */}
-          <div className="absolute inset-0 rounded-b-[20px] md:rounded-b-[28px] bg-gradient-to-t from-background via-background/30 to-transparent" />
-          {/* Back button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm shadow-card transition-all hover:shadow-card-hover active:scale-95"
-          >
-            <ArrowLeft className="h-5 w-5 text-foreground" />
-          </button>
-        </div>
-      ) : (
-        <div className="sticky top-0 z-10 glass-strong border-b border-border/30">
-          <div className="flex items-center gap-3 px-5 py-4">
-            <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors active:scale-95">
+            {/* Left gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 via-foreground/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 to-transparent" />
+
+            {/* Back button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="absolute top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-card/80 backdrop-blur-sm shadow-card transition-all hover:shadow-card-hover active:scale-95"
+            >
               <ArrowLeft className="h-5 w-5 text-foreground" />
             </button>
-            <span className="text-xs font-semibold text-muted-foreground">
-              {t('step.stepOf', { current: step.step_order, total: steps.length })}
-            </span>
+
+            {/* Overlaid text content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex flex-col justify-end">
+              {/* Step indicator */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-foreground">
+                  <Check className="h-4 w-4 rounded-full bg-primary text-primary-foreground p-0.5" />
+                  {t('step.stepOf', { current: step.step_order, total: steps.length })}
+                </span>
+                <span className="text-primary-foreground/50">·</span>
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-primary-foreground/80">
+                  <FileText className="h-3.5 w-3.5" />
+                  {step.category}
+                </span>
+              </div>
+              {/* Title */}
+              <h1 className="text-[28px] md:text-[36px] font-black tracking-tight leading-[1.1] text-primary-foreground max-w-[60%]">
+                {step.title}
+              </h1>
+              {/* Description */}
+              <p className="mt-3 text-[14px] md:text-[15px] leading-relaxed text-primary-foreground/80 max-w-[55%]">
+                {step.explanation}
+              </p>
+            </div>
           </div>
         </div>
+      ) : (
+        <>
+          <div className="sticky top-0 z-10 glass-strong border-b border-border/30">
+            <div className="flex items-center gap-3 px-5 py-4">
+              <button onClick={() => navigate(-1)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors active:scale-95">
+                <ArrowLeft className="h-5 w-5 text-foreground" />
+              </button>
+              <span className="text-xs font-semibold text-muted-foreground">
+                {t('step.stepOf', { current: step.step_order, total: steps.length })}
+              </span>
+            </div>
+          </div>
+          <div className="px-6 md:px-8 lg:px-0 w-full max-w-4xl mx-auto mt-6 mb-8 animate-fade-in">
+            <h1 className="text-[28px] md:text-[34px] font-black tracking-tight leading-[1.15] text-foreground">
+              {step.title}
+            </h1>
+            <p className="mt-3 text-[15px] md:text-base leading-relaxed text-muted-foreground max-w-2xl">
+              {step.explanation}
+            </p>
+          </div>
+        </>
       )}
 
-      <div className="px-6 md:px-8 lg:px-0 w-full max-w-4xl mx-auto">
-        {/* ── Step indicator + Category ── */}
-        <div className="mt-5 mb-3 flex items-center gap-2 animate-fade-in">
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary">
-            <Check className="h-4 w-4 rounded-full bg-primary text-primary-foreground p-0.5" />
-            {t('step.stepOf', { current: step.step_order, total: steps.length })}
-          </span>
-          <span className="text-muted-foreground/40">·</span>
-          <span className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground">
-            <FileText className="h-3.5 w-3.5 text-primary" />
-            {step.category}
-          </span>
-        </div>
-
-        {/* ── Title & Description ── */}
-        <div className="animate-fade-in mb-8">
-          <h1 className="text-[28px] md:text-[34px] font-black tracking-tight leading-[1.15] text-foreground">
-            {step.title}
-          </h1>
-          <p className="mt-3 text-[15px] md:text-base leading-relaxed text-muted-foreground max-w-2xl">
-            {step.explanation}
-          </p>
-        </div>
-
-        {/* ── Info Cards Row (4 cards like reference) ── */}
+      <div className="px-6 md:px-8 lg:px-0 w-full max-w-4xl mx-auto mt-6">
+        {/* ── Info Cards Row ── */}
         <div className="mb-8 grid grid-cols-2 md:grid-cols-4 gap-3 animate-slide-up" style={{ animationDelay: '80ms' }}>
           {[
             { icon: Clock, label: t('step.time'), value: step.estimated_time },
