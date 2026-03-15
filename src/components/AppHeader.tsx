@@ -15,6 +15,7 @@ const AppHeader = () => {
     location.pathname.startsWith('/onboarding') ||
     location.pathname.startsWith('/guide/') ||
     location.pathname.startsWith('/step/') ||
+    location.pathname.startsWith('/admin') ||
     !user
   ) {
     return null;
