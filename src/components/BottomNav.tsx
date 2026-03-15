@@ -19,7 +19,8 @@ const BottomNav = () => {
     hiddenPaths.includes(location.pathname) ||
     location.pathname.startsWith('/onboarding') ||
     location.pathname.startsWith('/step/') ||
-    location.pathname.startsWith('/guide/')
+    location.pathname.startsWith('/guide/') ||
+    location.pathname.startsWith('/admin')
   ) {
     return null;
   }
