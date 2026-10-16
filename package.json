@@ -10,11 +10,16 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "local:setup": "supabase start && node scripts/local-env.mjs",
+    "local:stop": "supabase stop",
+    "local:status": "supabase status",
+    "local:env": "node scripts/local-env.mjs",
+    "db:reset": "supabase db reset --local",
+    "test:local": "node scripts/local-smoke.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
-    "@lovable.dev/cloud-auth-js": "^1.0.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-aspect-ratio": "^1.1.7",
@@ -84,8 +89,8 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "jsdom": "^20.0.3",
-    "lovable-tagger": "^1.1.13",
     "postcss": "^8.5.6",
+    "supabase": "^2.121.0",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { lovable } from '@/integrations/lovable';
 import { MapPin, Mail, Lock, ArrowRight, Eye, EyeOff, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -35,8 +34,8 @@ const AuthPage = () => {
         if (error) throw error;
         toast.success(t('auth.signupSuccess'));
       }
-    } catch (error: any) {
-      toast.error(error.message || t('auth.genericError'));
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : t('auth.genericError'));
     } finally {
       setLoading(false);
     }
@@ -45,10 +44,13 @@ const AuthPage = () => {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth('google', { redirect_uri: `${window.location.origin}/dashboard` });
+      const result = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/dashboard` },
+      });
       if (result.error) toast.error(t('auth.googleError'));
-    } catch (error: any) {
-      toast.error(error.message || t('auth.googleError'));
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : t('auth.googleError'));
     } finally {
       setLoading(false);
     }
@@ -76,7 +78,7 @@ const AuthPage = () => {
             </p>
           </div>
 
-          {!resetMode && (
+          {!resetMode && import.meta.env.VITE_GOOGLE_AUTH_ENABLED === 'true' && (
             <>
               <button onClick={handleGoogleLogin} disabled={loading}
                 className="flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-border bg-card text-sm font-semibold text-foreground transition-all duration-200 hover:shadow-card-hover hover:border-border active:scale-[0.98] disabled:opacity-50"
