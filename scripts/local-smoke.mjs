@@ -30,7 +30,11 @@ try {
   imagePath = `${users[0]}/smoke.svg`;
   check(await first.storage.from('avatars').upload(imagePath, '<svg xmlns="http://www.w3.org/2000/svg"/>', { contentType: 'image/svg+xml' }));
   check(await first.storage.from('avatars').remove([imagePath]));
-  console.log('PASS: signup, profile trigger, RLS isolation, journey progress, avatar upload/delete');
+  const { user } = check(await first.auth.getUser());
+  assert.throws(() => execFileSync(process.execPath, ['scripts/local-admin.mjs', `missing-${randomUUID()}@example.test`], { stdio: 'pipe' }));
+  execFileSync(process.execPath, ['scripts/local-admin.mjs', user.email], { stdio: 'pipe' });
+  assert.equal(check(await first.from('user_roles').select('role').eq('user_id', user.id).single()).role, 'admin');
+  console.log('PASS: signup, profile trigger, RLS isolation, journey progress, avatar upload/delete, local admin');
 } finally {
   if (imagePath) check(await admin.storage.from('avatars').remove([imagePath]));
   for (const id of users) check(await admin.auth.admin.deleteUser(id));

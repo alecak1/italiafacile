@@ -19,7 +19,6 @@ Il primo setup scarica le immagini Docker e applica le migrazioni SQL.
 Non importa dati, utenti o file dal vecchio servizio.
 
 - App: http://127.0.0.1:8080
-- Supabase Studio: http://127.0.0.1:54323
 - Email di sviluppo: http://127.0.0.1:54324
 - API: http://127.0.0.1:54321
 - PostgreSQL: porta 54322 (credenziali in `npm run local:status`)
@@ -35,15 +34,24 @@ Non usare lo stack CLI di sviluppo come server pubblico di produzione.
 
 ## Primo amministratore
 
-Registrati nell'app, poi apri SQL Editor in Studio ed esegui, sostituendo
-l'indirizzo con quello usato nella registrazione:
+Registrati nell'app locale, poi assegna il ruolo amministratore al tuo
+indirizzo con:
 
-```sql
-insert into public.user_roles (user_id, role)
-select id, 'admin'::public.app_role
-from auth.users where email = 'tuo-indirizzo@example.test'
-on conflict (user_id, role) do nothing;
+```sh
+npm run local:admin -- tuo-indirizzo@example.test
 ```
+
+Il comando opera solo sul container PostgreSQL locale `supabase_db_italiafacile`.
+Per una console SQL locale puoi usare:
+
+```sh
+docker exec -it supabase_db_italiafacile psql -U postgres -d postgres
+```
+
+Studio e il runtime Edge Functions sono disabilitati per ridurre il download
+iniziale; l'app non richiede questi servizi. Per usare Studio, imposta
+`[studio].enabled = true` in `supabase/config.toml`, poi ferma e riavvia lo stack.
+Il pannello sarà disponibile su http://127.0.0.1:54323 dopo il download dell'immagine.
 
 Il seed include contenuti dimostrativi per provare il percorso, da sostituire
 prima della pubblicazione. Nessun account amministratore viene creato automaticamente.
