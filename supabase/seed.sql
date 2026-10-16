@@ -14,3 +14,12 @@ CROSS JOIN (VALUES
 ) AS s(step_order, title, category)
 WHERE c.slug = 'bg-it'
 ON CONFLICT (corridor_id, step_order) DO NOTHING;
+
+-- Recovered illustration is versioned with the frontend, independent of remote storage.
+UPDATE public.journey_step_templates AS step
+SET image_url = '/images/journey/codice-fiscale.png'
+FROM public.relocation_corridors AS corridor
+WHERE step.corridor_id = corridor.id
+  AND corridor.slug = 'bg-it'
+  AND step.step_order = 1
+  AND step.image_url IS NULL;

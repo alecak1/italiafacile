@@ -17,7 +17,8 @@
     "local:env": "node scripts/local-env.mjs",
     "db:reset": "supabase db reset --local",
     "test:local": "node scripts/local-smoke.mjs",
-    "local:admin": "node scripts/local-admin.mjs"
+    "local:admin": "node scripts/local-admin.mjs",
+    "content:restore": "node scripts/restore-local-content.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

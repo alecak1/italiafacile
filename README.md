@@ -56,6 +56,34 @@ Il pannello sarà disponibile su http://127.0.0.1:54323 dopo il download dell'im
 Il seed include contenuti dimostrativi per provare il percorso, da sostituire
 prima della pubblicazione. Nessun account amministratore viene creato automaticamente.
 
+## Contenuti recuperati dal progetto precedente
+
+Il database locale contiene i corridoi, i passi, le guide e i contributi della
+community recuperabili tramite le API pubbliche del backend precedente.
+L'illustrazione collegata al codice fiscale è servita dal frontend in
+`public/images/journey/codice-fiscale.png`, senza dipendenze dal vecchio storage.
+
+La copia dei contenuti e dei quattro file immagine si trova in
+`backups/legacy-content/`, esclusa da Git perché può contenere testo degli utenti.
+Conserva questa cartella separatamente per trasferire i contenuti su un altro computer.
+`manifest.json` contiene conteggi e hash dei file; `restore.sql` permette di
+reimportare il contenuto dopo un reset locale:
+
+```sh
+npm run content:restore
+```
+
+Il ripristino aggiorna le righe presenti nello snapshot, senza cancellare i nuovi
+contenuti locali. Il ripristino risolve i corridoi per slug e i passi per corridoio e ordine,
+adattando gli identificativi al database di destinazione per preservare i collegamenti. Non usare direttamente questo SQL
+su un cloud già popolato senza verificare eventuali conflitti degli identificativi.
+
+Gli account originali, le credenziali, le sessioni, i profili, i ruoli e i progressi
+personali non sono stati copiati. I contributi storici sono associati ad autori
+anonimi tecnici senza email, password o identità di login, bloccati all'accesso.
+Eventuali bozze e dati privati nascosti dalle policy del vecchio database non sono
+inclusi nello snapshot pubblico.
+
 ## Google login
 
 Il login usa direttamente Supabase Auth. In locale è disabilitato per default:
